@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gestor de Estudos · UFPB 2026 · Novo Edital</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <style>
+        /* ========== ESTILOS COMPLETOS ========== */
+        :root {
+            --primary: #077ADC;
+            --primary-hover: #08467C;
+            --primary-dark: #08467C;
+            --primary-soft: #E8F4FD;
+            --primary-light: #4AA3FF;
+            --gold: #E2970D;
+            --gold-light: #F4E05C;
+            --gold-soft: #FEF9E7;
+            --red: #E91B00;
+            --red-soft: #FDEDEC;
+            --bg: #F7FAFC;
+            --surface: #FFFFFF;
+            --surface-alt: #F1F5F9;
+            --text-primary: #102A43;
+            --text-secondary: #6B7280;
+            --muted: #9CA3AF;
+            --border: #E2E8F0;
+            --success: #10B981;
+            --success-soft: #D1FAE5;
+            --warning: #E2970D;
+            --warning-soft: #FEF9E7;
+            --danger: #E91B00;
+            --danger-soft: #FDEDEC;
+            --zebra-odd: #F8FAFC;
+            --zebra-even: #FFFFFF;
+            --sidebar-w: 260px;
+            --header-h: 64px;
+            --radius: 20px;
+            --radius-sm: 14px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow: 0 4px 16px rgba(8, 70, 124, 0.06);
+            --shadow-lg: 0 8px 30px rgba(8, 70, 124, 0.08);
+            --font: 'Inter', system-ui, -apple-system, sans-serif;
+            --footer-bg: #08467C;
+            --footer-text: rgba(255,255,255,0.85);
+            --footer-heading: #FFFFFF;
+            --footer-border: rgba(255,255,255,0.1);
+            --footer-accent: #F4E05C;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0F172A;
+            --surface: #1E293B;
+            --surface-alt: #1E293B;
+            --text-primary: #F1F5F9;
+            --text-secondary: #CBD5E1;
+            --muted: #94A3B8;
+            --border: #334155;
+            --zebra-odd: #1E293B;
+            --zebra-even: #263348;
+            --primary-soft: rgba(7, 122, 220, 0.15);
+            --gold-soft: rgba(226, 151, 13, 0.15);
+            --red-soft: rgba(233, 27, 0, 0.15);
+            --success-soft: rgba(16, 185, 129, 0.15);
+            --warning-soft: rgba(226, 151, 13, 0.15);
+            --danger-soft: rgba(233, 27, 0, 0.15);
+            --shadow: 0 4px 16px rgba(0,0,0,0.3);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.4);
+            --footer-bg: #0A2540;
+            --footer-text: #CBD5E1;
+            --footer-heading: #FFFFFF;
+            --footer-border: rgba(255,255,255,0.1);
+        }
+
+        [data-theme="dark"] .topbar { background: linear-gradient(135deg, #0A2540 0%, #0B3A6B 55%, #1E5090 100%); }
+        [data-theme="dark"] .sidebar { background: linear-gradient(180deg, #0A2540 0%, #0B3A6B 55%, #1E5090 100%); }
+        [data-theme="dark"] .hero { background: linear-gradient(135deg, #0A2540 0%, #0B3A6B 55%, #1E5090 100%) !important; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #1E293B; color: #F1F5F9; }
+        [data-theme="dark"] .modal h2, [data-theme="dark"] .modal h4, [data-theme="dark"] .modal p { color: #F1F5F9; }
+        [data-theme="dark"] .btn-outline { border-color: var(--primary); color: var(--primary); }
+        [data-theme="dark"] .btn-outline:hover { background: rgba(7, 122, 220, 0.2); }
+        [data-theme="dark"] .estado-btn { background: #1E293B; border-color: #334155; color: #CBD5E1; }
+        [data-theme="dark"] .estado-btn.estado-ativo-0 { background: #334155; border-color: #475569; color: #CBD5E1; }
+        [data-theme="dark"] .estado-btn.estado-ativo-1 { background: rgba(226, 151, 13, 0.2); border-color: #E2970D; color: #FCD34D; }
+        [data-theme="dark"] .estado-btn.estado-ativo-2 { background: rgba(16, 185, 129, 0.2); border-color: #10B981; color: #6EE7B7; }
+        [data-theme="dark"] .plano-item { background: #1E293B; border-color: #334155; }
+        [data-theme="dark"] .plano-item.concluido { background: #263348; }
+        [data-theme="dark"] .check-btn { background: #1E293B; border-color: #334155; }
+        [data-theme="dark"] .ciclo-dia { background: #1E293B; }
+        [data-theme="dark"] .insight-box { background: #1E293B; border-left-color: #077ADC; }
+        [data-theme="dark"] .motivational-card { background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); border-color: #334155; }
+        [data-theme="dark"] .card { background: var(--surface); border-color: var(--border); }
+        .card-destaque { background: linear-gradient(135deg, var(--surface) 0%, var(--primary-soft) 100%); border: 2px solid var(--primary); }
+        [data-theme="dark"] .card-destaque { background: linear-gradient(135deg, #1E293B 0%, rgba(7,122,220,0.1) 100%); border-color: var(--primary-light); }
+        [data-theme="dark"] .table-wrap table th { background: #263348; }
+        [data-theme="dark"] .table-wrap table td { border-color: var(--border); }
+        [data-theme="dark"] .progress-bar { background: #334155; }
+        [data-theme="dark"] .search-input { background: #1E293B; border-color: #334155; color: #F1F5F9; }
+        [data-theme="dark"] .search-input::placeholder { color: #94A3B8; }
+        [data-theme="dark"] input, [data-theme="dark"] textarea, [data-theme="dark"] select { background: #1E293B; border-color: #334155; color: #F1F5F9; }
+        [data-theme="dark"] #globalSearch { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
+        [data-theme="dark"] .logo-destaque-container { background: linear-gradient(to bottom, rgba(7,122,220,0.05), transparent); }
+        [data-theme="dark"] .foguete-track { background: linear-gradient(90deg, #1E293B 0%, #334155 50%, #475569 100%); }
+        [data-theme="dark"] .badge-basicas { background: rgba(7,122,220,0.2); color: #93C5FD; }
+        [data-theme="dark"] .badge-especificas { background: rgba(226,151,13,0.2); color: #FCD34D; }
+        [data-theme="dark"] .badge-especializadas { background: rgba(16,185,129,0.2); color: #6EE7B7; }
+        [data-theme="dark"] .badge-peso { background: #334155; color: #CBD5E1; }
+        [data-theme="dark"] .badge-revisao { background: rgba(233,27,0,0.2); color: #FCA5A5; }
+        [data-theme="dark"] .badge-plano { background: rgba(7,122,220,0.2); color: #93C5FD; }
+        [data-theme="dark"] .badge-conquista { background: linear-gradient(135deg, rgba(226,151,13,0.3), rgba(244,224,92,0.2)); color: #FDE68A; }
+        .badge-aprovacao { background: var(--gold-soft); color: var(--gold); }
+        [data-theme="dark"] .badge-aprovacao { background: rgba(226,151,13,0.15); color: #FCD34D; }
+        [data-theme="dark"] .kpi-icon.purple { background: rgba(7,122,220,0.2); color: #93C5FD; }
+        [data-theme="dark"] .kpi-icon.green { background: rgba(16,185,129,0.2); color: #6EE7B7; }
+        [data-theme="dark"] .kpi-icon.amber { background: rgba(226,151,13,0.2); color: #FCD34D; }
+        [data-theme="dark"] .kpi-icon.blue { background: rgba(8,70,124,0.3); color: #93C5FD; }
+        [data-theme="dark"] .kpi-icon.red { background: rgba(233,27,0,0.2); color: #FCA5A5; }
+        [data-theme="dark"] .kpi-icon.gold { background: rgba(226,151,13,0.2); color: #FCD34D; }
+        .topico-item:nth-child(odd) { background: var(--zebra-odd); }
+        .topico-item:nth-child(even) { background: var(--zebra-even); }
+        .revisao-pendente { background: var(--red-soft); }
+        [data-theme="dark"] .revisao-pendente { background: rgba(233,27,0,0.2); }
+        [data-theme="dark"] .conquista-card.desbloqueada { background: linear-gradient(135deg, rgba(226,151,13,0.15), rgba(244,224,92,0.1)); border-color: rgba(244,224,92,0.3); }
+        [data-theme="dark"] .conquista-card.bloqueada { background: #334155; filter: grayscale(100%); }
+        [data-theme="dark"] .conquista-icone.desbloqueada { background: rgba(226,151,13,0.3); color: #FCD34D; }
+        [data-theme="dark"] .conquista-icone.bloqueada { background: #334155; color: #94A3B8; }
+        [data-theme="dark"] #searchDropdown { background: #1E293B; border-color: var(--border); }
+        [data-theme="dark"] #searchDropdown .dropdown-item { border-bottom-color: #334155; color: var(--text-primary); }
+        [data-theme="dark"] #searchDropdown .dropdown-item:hover { background: var(--primary-soft); }
+        [data-theme="dark"] tbody tr:hover td { background: var(--primary-soft) !important; }
+        [data-theme="dark"] .disciplina-row:hover { background: var(--primary-soft) !important; }
+        [data-theme="dark"] .celebracao-card { background: #1E293B; color: #F1F5F9; }
+        .theme-toggle-btn { background: rgba(255,255,255,0.15); border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #FFFFFF; font-size: 1rem; transition: background 0.2s; }
+        .theme-toggle-btn:hover { background: rgba(255,255,255,0.25); }
+        [data-theme="dark"] .theme-toggle-btn { color: #F4E05C; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font); background: var(--bg); color: var(--text-primary); min-height: 100vh; display: flex; flex-direction: column; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+        .sidebar { width: var(--sidebar-w); background: linear-gradient(180deg, #08467C 0%, #077ADC 55%, #4AA3FF 100%); color: #fff; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; display: flex; flex-direction: column; transition: transform var(--transition); box-shadow: 0 20px 48px rgba(8, 70, 124, 0.15); border-right: 1px solid rgba(255, 255, 255, 0.08); }
+        .sidebar-header { padding: 18px 16px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); text-align: center; }
+        .sidebar-logo { display: block; max-width: 160px; width: 100%; margin: 0 auto 14px; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.15)); transition: transform 0.3s; }
+        .sidebar-logo:hover { transform: scale(1.03); }
+        .profile-pic-wrapper { width: 90px; height: 90px; border-radius: 50%; margin: 0 auto 12px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; transition: all 0.3s; border: 2px solid rgba(255,255,255,0.3); }
+        .profile-pic-wrapper:hover { background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.5); transform: scale(1.03); }
+        .profile-pic { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: none; }
+        .profile-pic-icon { font-size: 3.5rem; color: rgba(255,255,255,0.8); transition: opacity 0.2s; }
+        .profile-pic-wrapper.has-image .profile-pic-icon { display: none; }
+        .profile-pic-wrapper.has-image .profile-pic { display: block; }
+        .sidebar-header h2 { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.3px; margin-top: 4px; color: #FFFFFF; }
+        .sidebar-header .subtitle { font-size: 0.66rem; opacity: 0.6; letter-spacing: 1.2px; text-transform: uppercase; font-weight: 500; color: #FFFFFF; }
+        .sidebar-nav { flex: 1; padding: 8px 12px; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none; }
+        .sidebar-nav::-webkit-scrollbar { display: none; }
+        .sidebar-nav a { display: flex; align-items: center; gap: 12px; padding: 11px 16px; color: rgba(255, 255, 255, 0.75); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: all 0.2s ease; border-radius: 10px; cursor: pointer; margin-bottom: 2px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+        .sidebar-nav a:last-of-type { border-bottom: none; }
+        .sidebar-nav a:hover { background: rgba(255, 255, 255, 0.15); color: #fff; transform: translateX(2px); }
+        .sidebar-nav a.active { background: rgba(255, 255, 255, 0.2); color: #fff; font-weight: 600; box-shadow: 0 0 20px rgba(255, 255, 255, 0.15); }
+        .sidebar-nav a.external-link { color: rgba(255, 255, 255, 0.6); font-size: 0.9rem; border-top: 1px solid rgba(255,255,255,0.2); border-bottom: none; margin-top: 8px; padding-top: 14px; border-radius: 0 0 10px 10px; }
+        .sidebar-nav a.external-link:hover { color: #fff; background: rgba(244, 224, 92, 0.2); }
+        .sidebar-footer { padding: 14px 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.66rem; opacity: 0.45; text-align: center; color: #FFFFFF; }
+        .main { flex: 1; margin-left: var(--sidebar-w); width: calc(100% - var(--sidebar-w)); display: flex; flex-direction: column; }
+        .topbar { background: linear-gradient(135deg, #08467C 0%, #077ADC 55%, #4AA3FF 100%); backdrop-filter: blur(14px); height: var(--header-h); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; border-bottom: 1px solid rgba(255, 255, 255, 0.15); position: sticky; top: 0; z-index: 50; color: #FFFFFF; box-shadow: 0 4px 20px rgba(8, 70, 124, 0.15); }
+        .topbar h1 { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 10px; color: #FFFFFF; }
+        .topbar-actions { display: flex; align-items: center; gap: 16px; }
+        .global-search-wrap { position: relative; }
+        #globalSearch { padding: 8px 36px 8px 14px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 30px; font-size: 0.82rem; font-family: var(--font); width: 220px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; background: rgba(255, 255, 255, 0.15); color: #FFFFFF; backdrop-filter: blur(4px); }
+        #globalSearch::placeholder { color: rgba(255, 255, 255, 0.7); }
+        #globalSearch:focus { border-color: #F4E05C; box-shadow: 0 0 0 3px rgba(244, 224, 92, 0.2); background: rgba(255, 255, 255, 0.25); }
+        .search-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: rgba(255, 255, 255, 0.7); pointer-events: none; font-size: 0.9rem; }
+        #searchDropdown { position: absolute; top: 42px; left: 0; right: 0; background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); max-height: 200px; overflow-y: auto; z-index: 60; display: none; }
+        #searchDropdown .dropdown-item { padding: 10px 14px; cursor: pointer; font-size: 0.82rem; border-bottom: 1px solid #f4f4f5; display: flex; align-items: center; gap: 8px; color: var(--text-primary); }
+        #searchDropdown .dropdown-item:hover { background: #E8F4FD; }
+        #searchDropdown .dropdown-item:last-child { border-bottom: none; }
+        #refreshBtn { background: rgba(255, 255, 255, 0.15); border: none; font-size: 1.2rem; cursor: pointer; color: #FFFFFF; transition: transform 0.4s, background 0.2s; padding: 6px; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; }
+        #refreshBtn:hover { background: rgba(255, 255, 255, 0.25); }
+        .spin { animation: spin 0.6s ease; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .content { padding: 28px 32px; max-width: 1400px; margin: 0 auto; width: 100%; animation: fadeSlideIn 0.4s ease; flex: 1; }
+        @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px 28px; margin-bottom: 20px; border: 1px solid rgba(7, 122, 220, 0.06); transition: all var(--transition); transform-style: preserve-3d; perspective: 1000px; }
+        .card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+        @media (min-width: 1025px) { .card:hover { transform: translateY(-2px) rotateY(0.5deg); } }
+        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+        .card-header h3 { font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 8px; color: var(--text-primary); }
+        .badge { display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; border-radius: 24px; font-size: 0.7rem; font-weight: 600; }
+        .badge-basicas { background: #E8F4FD; color: #08467C; }
+        .badge-especificas { background: #FEF9E7; color: #92400E; }
+        .badge-especializadas { background: #D1FAE5; color: #065F46; }
+        .badge-peso { background: #F1F5F9; color: #475569; }
+        .badge-revisao { background: #FDEDEC; color: #E91B00; }
+        .badge-plano { background: #E8F4FD; color: #08467C; }
+        .badge-conquista { background: linear-gradient(135deg, #FEF9E7, #F4E05C); color: #92400E; font-weight: 700; }
+        .progress-bar { height: 10px; background: #F1F5F9; border-radius: 20px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 20px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); background: linear-gradient(90deg, #077ADC 0%, #4AA3FF 100%); box-shadow: 0 0 16px rgba(7, 122, 220, 0.35); }
+        .progress-fill.low { background: linear-gradient(90deg, #E91B00, #F87171); box-shadow: 0 0 14px rgba(233, 27, 0, 0.3); }
+        .progress-fill.mid { background: linear-gradient(90deg, #E2970D, #F4E05C); box-shadow: 0 0 14px rgba(226, 151, 13, 0.3); }
+        .progress-fill.high { background: linear-gradient(90deg, #10B981, #34D399); box-shadow: 0 0 14px rgba(16, 185, 129, 0.3); }
+        .btn { padding: 9px 18px; border-radius: 24px; border: none; cursor: pointer; font-weight: 600; font-size: 0.8rem; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px; font-family: var(--font); text-decoration: none; }
+        .btn:active { transform: scale(0.97); }
+        .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 2px 8px rgba(7, 122, 220, 0.3); }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-outline:hover { background: var(--primary-soft); }
+        .btn-sm { padding: 6px 14px; font-size: 0.72rem; }
+        .btn-accent { background: var(--gold); color: #fff; box-shadow: 0 2px 8px rgba(226, 151, 13, 0.3); }
+        .btn-accent:hover { background: #C8870B; }
+        .btn-warning { background: var(--gold); color: #fff; }
+        .btn-warning:hover { background: #C8870B; }
+        .btn-download { background: #077ADC; color: #fff; box-shadow: 0 2px 8px rgba(7, 122, 220, 0.3); }
+        .btn-download:hover { background: #08467C; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(7, 122, 220, 0.4); }
+        .btn-download-xs { padding: 4px 10px; font-size: 0.65rem; border-radius: 16px; background: #077ADC; color: #fff; box-shadow: 0 1px 4px rgba(7, 122, 220, 0.3); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; font-weight: 600; font-family: var(--font); transition: all 0.2s ease; white-space: nowrap; cursor: pointer; }
+        .btn-download-xs:hover { background: #08467C; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(7, 122, 220, 0.4); }
+        .btn-export { background: var(--gold); color: #fff; box-shadow: 0 2px 8px rgba(226, 151, 13, 0.3); font-weight: 600; }
+        .btn-export:hover { background: #C8870B; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(226, 151, 13, 0.4); }
+        .btn-revisar { background: #E91B00; color: #fff; box-shadow: 0 2px 8px rgba(233, 27, 0, 0.3); }
+        .btn-revisar:hover { background: #C81000; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; margin-bottom: 24px; }
+        .kpi-card { background: var(--surface); border-radius: var(--radius); padding: 22px 24px; border: 1px solid rgba(7, 122, 220, 0.06); box-shadow: var(--shadow); transition: all var(--transition); display: flex; align-items: center; gap: 16px; }
+        .kpi-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+        .kpi-icon { width: 52px; height: 52px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+        .kpi-icon.purple { background: #E8F4FD; color: #077ADC; }
+        .kpi-icon.green { background: #D1FAE5; color: #059669; }
+        .kpi-icon.amber { background: #FEF9E7; color: #E2970D; }
+        .kpi-icon.blue { background: #E8F4FD; color: #08467C; }
+        .kpi-icon.red { background: #FDEDEC; color: #E91B00; }
+        .kpi-icon.gold { background: #FEF9E7; color: #E2970D; }
+        .kpi-info .kpi-value { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.4px; line-height: 1.1; color: var(--text-primary); }
+        .kpi-info .kpi-label { font-size: 0.75rem; color: var(--text-secondary); font-weight: 500; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+        th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: var(--surface-alt); font-weight: 700; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); }
+        tbody tr:nth-child(odd) { background: var(--zebra-odd); }
+        tbody tr:nth-child(even) { background: var(--zebra-even); }
+        tbody tr:hover td { background: #E8F4FD !important; }
+        .disciplina-row:nth-child(odd) { background: var(--zebra-odd); }
+        .disciplina-row:nth-child(even) { background: var(--zebra-even); }
+        .disciplina-row:hover { background: #E8F4FD !important; }
+        .chart-container { position: relative; width: 100%; max-height: 300px; }
+        .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .foguete-container { position: relative; margin: 20px 0 30px; padding: 10px 0; }
+        .foguete-track { height: 16px; background: linear-gradient(90deg, #F1F5F9 0%, #E8F4FD 50%, #BFDBFE 100%); border-radius: 20px; position: relative; overflow: visible; box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.04); }
+        .foguete-progress { height: 100%; border-radius: 20px; background: linear-gradient(90deg, #077ADC, #4AA3FF, #93C5FD); transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 20px rgba(7, 122, 220, 0.5); }
+        .foguete-icone { position: absolute; top: -28px; font-size: 2.2rem; color: #077ADC; transition: left 1.2s cubic-bezier(0.4, 0, 0.2, 1); filter: drop-shadow(0 4px 8px rgba(7, 122, 220, 0.5)); transform: translateX(-50%); z-index: 5; animation: fogueteFlutuar 2s ease-in-out infinite; }
+        @keyframes fogueteFlutuar { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-6px); } }
+        .foguete-label { position: absolute; left: 50%; transform: translateX(-50%); bottom: -28px; font-weight: 700; font-size: 0.9rem; color: var(--primary); transition: left 1.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap; }
+        .motivational-card { background: linear-gradient(135deg, #F7FAFC 0%, #E8F4FD 100%); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 24px; border: 1px solid var(--primary-soft); position: relative; overflow: hidden; box-shadow: var(--shadow); transition: all 0.4s ease; }
+        .motivational-card::before { content: '\201C'; position: absolute; top: -10px; left: 16px; font-size: 8rem; color: rgba(7, 122, 220, 0.06); font-family: Georgia, serif; line-height: 1; pointer-events: none; }
+        .motivational-card .frase-texto { font-size: 1.05rem; font-weight: 600; color: var(--text-primary); line-height: 1.5; position: relative; z-index: 1; letter-spacing: -0.1px; }
+        .motivational-card .frase-categoria { font-size: 0.72rem; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-top: 8px; opacity: 0.8; }
+        .motivational-card .frase-nav { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; position: relative; z-index: 1; }
+        .motivational-card .frase-nav button { background: rgba(7, 122, 220, 0.08); border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; color: var(--primary); font-size: 1rem; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .motivational-card .frase-nav button:hover { background: var(--primary); color: #fff; }
+        .search-input { padding: 10px 16px; border: 2px solid var(--border); border-radius: 30px; font-size: 0.85rem; font-family: var(--font); width: 240px; max-width: 100%; outline: none; transition: border-color 0.2s; }
+        .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(7, 122, 220, 0.1); }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(16, 42, 67, 0.6); backdrop-filter: blur(4px); z-index: 200; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.2s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal { background: #fff; border-radius: var(--radius); padding: 28px 32px; max-width: 750px; width: 95%; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 48px rgba(8, 70, 124, 0.15); position: relative; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+        .toast { position: fixed; bottom: 28px; right: 28px; background: #102A43; color: #fff; padding: 12px 22px; border-radius: 28px; font-size: 0.82rem; z-index: 999; animation: toastIn 0.35s ease; box-shadow: 0 8px 30px rgba(8, 70, 124, 0.15); display: flex; align-items: center; gap: 8px; }
+        @keyframes toastIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        .hidden { display: none !important; }
+        .hamburger { display: none; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #FFFFFF; }
+        .overlay-bg { position: fixed; inset: 0; background: rgba(16, 42, 67, 0.5); z-index: 99; }
+        .insight-box { background: #F7FAFC; border-radius: 16px; padding: 18px 20px; border-left: 4px solid #077ADC; margin-bottom: 16px; }
+        .tag { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
+        .tag-high { background: #FDEDEC; color: #E91B00; }
+        .tag-medium { background: #FEF9E7; color: #E2970D; }
+        .tag-low { background: #D1FAE5; color: #059669; }
+        .estado-btns { display: flex; gap: 4px; align-items: center; }
+        .estado-btn { padding: 4px 10px; border-radius: 16px; border: 1.5px solid var(--border); background: #fff; cursor: pointer; font-size: 0.68rem; font-weight: 600; transition: all 0.2s; white-space: nowrap; font-family: var(--font); }
+        .estado-btn.estado-ativo-0 { background: #F1F5F9; border-color: #CBD5E1; color: #475569; }
+        .estado-btn.estado-ativo-1 { background: #FEF9E7; border-color: #E2970D; color: #92400E; }
+        .estado-btn.estado-ativo-2 { background: #D1FAE5; border-color: #10B981; color: #065F46; }
+        .revisao-data { font-size: 0.7rem; color: var(--text-secondary); white-space: nowrap; }
+        #particlesCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: 0.3; }
+        .hero { position: relative; }
+        .hero > * { position: relative; z-index: 1; }
+        .hero-bg-image { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); max-height: 80%; width: auto; opacity: 0.12; z-index: 0; pointer-events: none; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1)); }
+        .plano-item { padding: 12px 16px; border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; gap: 12px; transition: all 0.2s; }
+        .plano-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .plano-item.concluido { opacity: 0.6; background: #F1F5F9; }
+        .plano-item .check-btn { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+        .plano-item .check-btn:hover { border-color: var(--success); background: var(--success-soft); }
+        .plano-item.concluido .check-btn { background: var(--success); border-color: var(--success); color: #fff; }
+        .plano-item .plano-info { flex: 1; min-width: 0; }
+        .plano-item .plano-disciplina { font-weight: 600; font-size: 0.85rem; }
+        .plano-item .plano-topico { font-size: 0.78rem; color: var(--text-secondary); }
+        .ciclo-config { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0; }
+        .ciclo-dia { background: #F1F5F9; border-radius: 12px; padding: 12px; min-width: 120px; }
+        .ciclo-dia h4 { font-size: 0.75rem; margin-bottom: 6px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .ciclo-dia label { display: block; font-size: 0.78rem; margin: 2px 0; cursor: pointer; }
+        .conquista-card { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 12px; margin-bottom: 6px; transition: all 0.2s; border: 1px solid var(--border); }
+        .conquista-card.desbloqueada { background: linear-gradient(135deg, #FEF9E7, #FFFBEB); border-color: #F4E05C; }
+        .conquista-card.bloqueada { opacity: 0.5; background: #F1F5F9; filter: grayscale(100%); }
+        .conquista-icone { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .conquista-icone.desbloqueada { background: #FEF9E7; color: #E2970D; }
+        .conquista-icone.bloqueada { background: #E2E8F0; color: #9CA3AF; }
+        .conquista-progresso { font-size: 0.7rem; color: var(--text-secondary); }
+        .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+        .confetti-piece { position: absolute; width: 10px; height: 10px; border-radius: 2px; animation: confettiFall linear forwards; }
+        @keyframes confettiFall { 0% { transform: translateY(-100px) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+        .celebracao-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9998; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.3s ease; }
+        .celebracao-card { background: #fff; border-radius: 20px; padding: 32px; text-align: center; max-width: 420px; width: 90%; box-shadow: 0 20px 48px rgba(0,0,0,0.2); animation: bounceIn 0.5s ease; }
+        @keyframes bounceIn { 0% { transform: scale(0.5); opacity: 0; } 50% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
+        .celebracao-card h2 { font-size: 1.5rem; margin-bottom: 8px; }
+        .celebracao-card .emoji { font-size: 3rem; display: block; margin-bottom: 12px; }
+        .conquistas-mini { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+        .conquistas-mini .badge-conquista { cursor: pointer; transition: transform 0.2s; }
+        .conquistas-mini .badge-conquista:hover { transform: scale(1.1); }
+        .app-footer { background: var(--footer-bg); color: var(--footer-text); padding: 22px 24px 16px; margin-top: 16px; border-top: 1px solid var(--footer-border); font-size: 0.78rem; line-height: 1.7; width: 100%; position: relative; z-index: 1; }
+        .footer-inner { max-width: 1300px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 24px; }
+        .footer-info { flex: 1 1 300px; min-width: 240px; }
+        .footer-info strong { color: var(--footer-heading); font-weight: 700; }
+        .footer-links { display: flex; flex-wrap: wrap; gap: 16px; list-style: none; padding: 0; margin: 8px 0 4px; }
+        .footer-links a { color: var(--footer-accent); text-decoration: none; font-weight: 600; transition: color 0.2s; }
+        .footer-links a:hover { color: #FFFFFF; }
+        .footer-social { display: flex; gap: 12px; align-items: center; margin-top: 4px; }
+        .footer-social a { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1); color: var(--footer-text); font-size: 1rem; transition: all 0.25s; text-decoration: none; }
+        .footer-social a:hover { background: var(--footer-accent); color: var(--footer-bg); transform: translateY(-2px); box-shadow: 0 4px 14px rgba(244,224,92,0.25); }
+        .footer-bottom { max-width: 1300px; margin: 16px auto 0; padding-top: 14px; border-top: 1px solid var(--footer-border); text-align: center; font-size: 0.7rem; color: rgba(255,255,255,0.6); display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+        .footer-bottom .footer-heart { color: var(--footer-accent); animation: heartBeat 1.5s infinite; display: inline-block; margin: 0 3px; }
+        @keyframes heartBeat { 0%, 100% { transform: scale(1); } 25% { transform: scale(1.15); } 50% { transform: scale(1); } }
+        #loginScreen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; z-index: 10000; background: #0A0A14; font-family: 'Inter', sans-serif; transition: opacity 0.5s ease; }
+        .login-left { width: 30%; min-width: 400px; background: #161827; display: flex; flex-direction: column; justify-content: center; padding: 60px 48px; position: relative; z-index: 2; box-shadow: 4px 0 30px rgba(0,0,0,0.5); }
+        .login-right { width: 70%; position: relative; overflow: hidden; }
+        .login-right img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
+        .login-right .overlay { position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(131,111,255,0.1), transparent 60%), linear-gradient(135deg, rgba(33,25,81,0.45), rgba(10,10,20,0.7)); box-shadow: 0 0 150px rgba(131,111,255,0.2); backdrop-filter: blur(2px); z-index: 1; }
+        .login-right canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .login-logo-vulp { max-width: 180px; margin: 0 auto 32px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)); transition: transform 0.3s; display: block; }
+        .login-logo-vulp:hover { transform: scale(1.05); }
+        .login-title { font-size: 1.8rem; font-weight: 700; color: #FFFFFF; margin-bottom: 8px; text-align: center; letter-spacing: -0.5px; }
+        .login-subtitle { font-size: 0.95rem; color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 36px; }
+        .login-input-group { position: relative; margin-bottom: 20px; }
+        .login-input-group i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.5); font-size: 0.95rem; transition: color 0.2s; }
+        .login-input-vulp { width: 100%; padding: 14px 16px 14px 44px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; font-size: 0.95rem; color: #FFFFFF; font-family: 'Inter', sans-serif; outline: none; transition: all 0.25s; }
+        .login-input-vulp::placeholder { color: rgba(255,255,255,0.4); }
+        .login-input-vulp:focus { border-color: #836FFF; background: rgba(255,255,255,0.12); box-shadow: 0 0 0 3px rgba(131,111,255,0.15); }
+        .login-input-vulp:focus + i { color: #836FFF; }
+        .login-forgot { display: block; text-align: right; font-size: 0.8rem; color: rgba(255,255,255,0.5); margin: -8px 0 24px; text-decoration: none; transition: color 0.2s; }
+        .login-forgot:hover { color: #836FFF; }
+        .login-btn-vulp { width: 100%; padding: 14px; border: none; border-radius: 12px; background: #836FFF; color: #FFFFFF; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s; font-family: 'Inter', sans-serif; letter-spacing: -0.2px; margin-bottom: 16px; }
+        .login-btn-vulp:hover { background: #6D5CE7; transform: translateY(-2px); box-shadow: 0 10px 25px rgba(131,111,255,0.4); }
+        .login-btn-vulp:active { transform: translateY(0); }
+        .login-signup { display: block; text-align: center; color: rgba(255,255,255,0.6); font-size: 0.85rem; text-decoration: none; transition: color 0.2s; }
+        .login-signup:hover { color: #836FFF; }
+        .login-error-vulp { color: #FF4D6A; font-size: 0.85rem; margin-top: 12px; display: none; align-items: center; gap: 6px; justify-content: center; }
+        .login-error-vulp.show { display: flex; }
+        @media (max-width: 1024px) { .login-right { display: none; } .login-left { width: 100%; min-width: unset; padding: 40px 24px; } }
+        @media (max-width: 480px) { .login-left { padding: 32px 20px; } .login-title { font-size: 1.5rem; } }
+        @media (max-width: 768px) { .sidebar { transform: translateX(-100%); } .sidebar.open { transform: translateX(0); } .main { margin-left: 0; width: 100%; } .hamburger { display: block; } .topbar { padding: 0 16px; } .content { padding: 20px 16px; } .charts-row { grid-template-columns: 1fr; } .kpi-grid { grid-template-columns: 1fr; } .hero-stats .hero-stat { padding: 10px 16px; } .hero h2 { font-size: 1.5rem; } .modal { padding: 20px; } .ciclo-config { flex-direction: column; } }
+    </style>
+</head>
+<body>
+    <!-- TELA DE LOGIN -->
+    <div id="loginScreen">
+        <div class="login-left">
+            <img src="https://res.cloudinary.com/dqmuoc3o0/image/upload/v1780180737/ChatGPT_Image_30_de_mai._de_2026_19_38_42_vdg7w4.png" alt="Logotipo VULP+" class="login-logo-vulp">
+            <h2 class="login-title">Estude com Inteligência</h2>
+            <p class="login-subtitle">Transforme sua preparação em aprovação.</p>
+            <form id="loginForm" autocomplete="off">
+                <div class="login-input-group">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="loginUsername" class="login-input-vulp" placeholder="Usuário" required autofocus>
+                </div>
+                <div class="login-input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="loginPassword" class="login-input-vulp" placeholder="Senha" required>
+                </div>
+                <a href="#" class="login-forgot">Esqueci minha senha</a>
+                <button type="submit" class="login-btn-vulp">Entrar</button>
+                <a href="#" class="login-signup">Não possui conta? <strong>Cadastre-se</strong></a>
+                <div id="loginError" class="login-error-vulp"><i class="fa-solid fa-circle-exclamation"></i> <span>Credenciais inválidas. Tente novamente.</span></div>
+            </form>
+        </div>
+        <div class="login-right">
+            <img src="https://res.cloudinary.com/dqmuoc3o0/image/upload/v1780228821/ChatGPT_Image_31_de_mai._de_2026_08_54_41_plpfpc.png" alt="Estudante focado" crossorigin="anonymous">
+            <div class="overlay"></div>
+            <canvas id="loginParticlesCanvas"></canvas>
+        </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar" style="display:none;">
+        <div class="sidebar-header">
+            <img src="https://res.cloudinary.com/dew6hgzpv/image/upload/ChatGPT_Image_30_de_mai._de_2026_09_33_21_xgeowr.png" alt="Logotipo UFPB" class="sidebar-logo">
+            <div class="profile-pic-wrapper" id="profilePicWrapper" title="Clique para alterar sua foto de perfil">
+                <img id="profilePicImg" class="profile-pic" alt="Foto de perfil">
+                <i id="profilePicIcon" class="fa-solid fa-user-circle profile-pic-icon"></i>
+            </div>
+            <input type="file" id="profilePicInput" accept="image/*" style="display: none;">
+            <h2>UFPB</h2>
+            <span class="subtitle">Assistente em Administração</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a data-tab="dashboard" class="active" onclick="navegar('dashboard')"><span class="nav-icon"><i class="fa-solid fa-chart-pie"></i></span> Dashboard</a>
+            <a data-tab="plano" onclick="navegar('plano')"><span class="nav-icon"><i class="fa-solid fa-calendar-check"></i></span> Plano Diário</a>
+            <a data-tab="disciplinas" onclick="navegar('disciplinas')"><span class="nav-icon"><i class="fa-solid fa-book-open"></i></span> Disciplinas</a>
+            <a data-tab="questoes" onclick="navegar('questoes')"><span class="nav-icon"><i class="fa-solid fa-file-pen"></i></span> Questões</a>
+            <a data-tab="revisoes" onclick="navegar('revisoes')"><span class="nav-icon"><i class="fa-solid fa-arrows-rotate"></i></span> Revisões</a>
+            <a data-tab="metas" onclick="navegar('metas')"><span class="nav-icon"><i class="fa-solid fa-bullseye"></i></span> Metas</a>
+            <a data-tab="estatisticas" onclick="navegar('estatisticas')"><span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span> Estatísticas</a>
+            <a data-tab="conquistas" onclick="navegar('conquistas')"><span class="nav-icon"><i class="fa-solid fa-trophy"></i></span> Conquistas</a>
+            <a href="https://vulps-anki-memoriza-o.vercel.app/" target="_blank" rel="noopener noreferrer" class="external-link" onclick="event.stopPropagation();"><span class="nav-icon"><i class="fa-solid fa-file-circle-question"></i></span> Simulado Prova</a>
+            <a href="https://drive.google.com/file/d/1Yni7uIoTNIjtt1RkplrKbskWr-4fzvbS/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="external-link" onclick="event.stopPropagation();"><span class="nav-icon"><i class="fa-solid fa-file-lines"></i></span> Último Edital</a>
+            <a href="https://tela-home.vercel.app/" target="_blank" rel="noopener noreferrer" class="external-link" onclick="event.stopPropagation();"><span class="nav-icon"><i class="fa-solid fa-external-link"></i></span> Plataforma VULP+</a>
+        </nav>
+        <div class="sidebar-footer">v14.0 · UFPB</div>
+    </aside>
+
+    <div id="overlay" class="overlay-bg hidden" onclick="fecharSidebar()"></div>
+
+    <!-- MAIN -->
+    <div class="main" id="mainContent" style="display:none;">
+        <header class="topbar">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button class="hamburger" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+                <h1 id="pageTitle"><i class="fa-solid fa-chart-pie"></i> Dashboard</h1>
+            </div>
+            <div class="topbar-actions">
+                <div class="global-search-wrap">
+                    <input type="text" id="globalSearch" placeholder="Buscar disciplina..." autocomplete="off">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <div id="searchDropdown"></div>
+                </div>
+                <button id="refreshBtn" title="Atualizar dados" onclick="atualizarDashboard()"><i class="fa-solid fa-rotate"></i></button>
+                <button class="theme-toggle-btn" id="themeToggle" title="Alternar modo noturno" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i></button>
+                <span style="color:rgba(255,255,255,0.9);font-size:0.82rem;"><i class="fa-regular fa-calendar"></i> <span id="dateText"></span></span>
+            </div>
+        </header>
+        <div class="content" id="contentArea"></div>
+        <footer class="app-footer" role="contentinfo">
+            <div class="footer-inner">
+                <div class="footer-info">
+                    <p><strong>© 2026 VULP+ Tecnologia e Educação</strong></p>
+                    <p>Gestor de Estudos UFPB · Assistente em Administração. Av. João Maria de Araújo, Residencial Olimpo, João Pessoa - PB, CEP 58067-300.</p>
+                    <ul class="footer-links">
+                        <li><a href="#">Política de privacidade</a></li>
+                        <li><a href="#">Termos de uso</a></li>
+                        <li><a href="#">Segurança</a></li>
+                        <li><a href="#">Mapa do site</a></li>
+                    </ul>
+                    <p><strong>VULP+ - 2026 © Todos os direitos reservados ®</strong></p>
+                </div>
+                <div class="footer-social">
+                    <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>VULP+ · Tecnologia e Educação Colaborativa</span><span>|</span>
+                <span>Feito com <span class="footer-heart">❤️</span> para concurseiros de todo o Brasil</span><span>|</span>
+                <span>🦊 Ninguém estuda sozinho</span>
+            </div>
+        </footer>
+    </div>
+
+    <div id="toast" class="toast hidden"></div>
+    <div id="confettiContainer" class="confetti-container"></div>
+
+    <script>
+        // ==================== NOVO EDITAL (COMPLETO) ====================
+        const editalData = {
+            grupos: {
+                'basicas': { nome: 'Conhecimentos Básicos', badgeClass: 'badge-basicas', pesoGrupo: 1 },
+                'especificas': { nome: 'Conhecimentos Específicos', badgeClass: 'badge-especificas', pesoGrupo: 1.5 },
+                'especializadas': { nome: 'Conhecimentos Especializados', badgeClass: 'badge-especializadas', pesoGrupo: 2 }
+            },
+            disciplinas: [
+                { id: 'lingua-portuguesa', nome: 'Língua Portuguesa', grupo: 'basicas', peso: 1, topicos: [
+                    'Interpretação e compreensão de textos', 'Características da textualidade', 'Estruturas linguísticas e classes de palavras',
+                    'Pragmática: significado contextual', 'Semântica vocabular (antônimos, sinônimos, homônimos, parônimos, heterônimos)',
+                    'Modos de organização discursiva (descrição, narração, exposição, argumentação)', 'Organização das frases nas situações comunicativas',
+                    'Linguagem lógica e figurada', 'Níveis de linguagem', 'Tipos de discurso (direto, indireto, indireto livre)', 'Funções da linguagem'
+                ] },
+                { id: 'lingua-inglesa', nome: 'Língua Inglesa', grupo: 'basicas', peso: 1, topicos: [
+                    'Estratégias de leitura (compreensão geral, informações específicas, análise, síntese, inferência, predição)',
+                    'Organização semântica e discursiva', 'Palavras mais frequentes, sinonímia, antonímia', 'Funções retóricas',
+                    'Metáfora e metonímia', 'Artigos definidos/indefinidos', 'Tempos e modos verbais', 'Preposições, conjunções, pronomes, modais',
+                    'Concordância nominal e verbal', 'Formação e classe de palavras', 'Expressões idiomáticas', 'Subordinação e coordenação',
+                    'Voz passiva', 'Discurso direto e indireto'
+                ] },
+                { id: 'administracao-publica', nome: 'Administração Pública e Políticas Públicas', grupo: 'basicas', peso: 1, topicos: [
+                    'Políticas públicas: conceito e ciclo (agenda, formulação, decisão, implementação, avaliação)',
+                    'Processos participativos (conselhos, orçamento participativo, parcerias)', 'Governo Aberto (Decreto nº 10.160/2019)',
+                    'Governo Digital (Decreto nº 10.332/2020)', 'Planejamento em organizações públicas (análise ambiente, objetivos, missão, visão, valores)',
+                    'Ciclo PDCA', 'Gestão por resultados na produção de serviços públicos', 'Governabilidade e governança',
+                    'Intermediação de interesses (clientelismo, corporativismo, neocorporativismo)', 'Decreto nº 9.203/2017 (política de governança)',
+                    'Corrupção e políticas públicas', 'Papel das instituições', 'Indicadores de políticas públicas'
+                ] },
+                { id: 'direito-constitucional', nome: 'Direito Constitucional', grupo: 'especificas', peso: 1.5, topicos: [
+                    'Constituição de 1988: princípios fundamentais', 'Aplicabilidade das normas constitucionais (eficácia plena, contida, limitada, programáticas)',
+                    'Direitos e garantias fundamentais (individuais, coletivos, sociais, nacionalidade, políticos, partidos)',
+                    'Organização político-administrativa (União, estados, DF, municípios, territórios)', 'Administração Pública (disposições gerais, servidores)',
+                    'Poder Executivo (atribuições e responsabilidades do Presidente)', 'Poder Legislativo (estrutura, funcionamento, processo legislativo, fiscalização, CPIs)',
+                    'Poder Judiciário (organização, competências, CNJ)', 'Funções essenciais à justiça (Ministério Público, Advocacia Pública)',
+                    'Ordem Econômica e Financeira'
+                ] },
+                { id: 'direito-administrativo', nome: 'Direito Administrativo', grupo: 'especificas', peso: 1.5, topicos: [
+                    'Estado, governo e Administração Pública', 'Direito administrativo: conceito, objeto, fontes', 'Ato administrativo (conceito, requisitos, atributos, classificação, extinção, decadência)',
+                    'Agentes públicos (conceito, espécies, cargo, emprego, função, provimento, vacância, efetividade, estabilidade, vitaliciedade, remuneração, direitos, deveres, responsabilidade, PAD)',
+                    'Lei nº 8.112/1990', 'Poderes da Administração (hierárquico, disciplinar, regulamentar, polícia; uso e abuso)',
+                    'Princípios expressos e implícitos', 'Responsabilidade civil do Estado (comissiva, omissiva, requisitos, excludentes, reparação, regresso)',
+                    'Serviços públicos (conceito, elementos, formas de prestação, delegação, classificação, princípios, Lei nº 13.460/2018)',
+                    'Organização administrativa (centralização, descentralização, concentração, desconcentração, administração direta e indireta, autarquias, fundações, empresas estatais, Lei nº 13.303/2016)',
+                    'Controle da Administração (administrativo, judicial, legislativo, improbidade – Lei nº 8.429/1992)',
+                    'Processo administrativo (Lei nº 9.784/1999)', 'Licitações e contratos (Leis nº 8.666/1993 e 14.133/2021)',
+                    'Ética Pública (Decretos nº 1.171/1994, 6.029/2007, Lei nº 12.813/2013, Exposição de Motivos nº 37/2000)',
+                    'Lei de Introdução às Normas do Direito Brasileiro (Decreto-Lei nº 4.657/1942, Decreto nº 9.830/2019)',
+                    'Acesso à informação (Lei nº 12.527/2011, Decretos nº 7.724/2012 e 8.777/2016)',
+                    'LGPD no Poder Público (Lei nº 13.709/2018, Capítulos II e IV)'
+                ] },
+                { id: 'administracao-financeira', nome: 'Administração Financeira e Orçamentária', grupo: 'especificas', peso: 1.5, topicos: [
+                    'Orçamento Público: conceitos, princípios', 'Orçamento na CF/88 (PPA, LDO, LOA)', 'Lei de Responsabilidade Fiscal (LRF)',
+                    'Classificação econômica da receita e despesa', 'Estágios da receita e despesa', 'Lei nº 10.180/2001 (sistema de planejamento e orçamento)'
+                ] },
+                { id: 'fundamentos-auditoria', nome: 'Fundamentos de Auditoria Governamental', grupo: 'especificas', peso: 1.5, topicos: [
+                    'Sistema de Controle Interno do Poder Executivo Federal (Lei nº 10.180/2001, Decreto nº 3.591/2000)',
+                    'Manual de Orientações Técnicas (MOT 2017)', 'Instrução Normativa SFC nº 3/2017'
+                ] },
+                { id: 'controladoria-geral', nome: 'Controladoria-Geral da União', grupo: 'especificas', peso: 1.5, topicos: [
+                    'Lei nº 13.844/2019 (estrutura e competência da CGU)', 'Decreto nº 9.681/2019',
+                    'Sistemas estruturantes: Controle Interno (Lei nº 10.180/2001, Decreto nº 3.591/2000)',
+                    'Sistema de Correição (Decreto nº 5.480/2005)', 'Sistema de Ouvidorias (Decreto nº 9.492/2018)',
+                    'Sistema de Integridade Pública (Decreto nº 10.756/2021)'
+                ] },
+                { id: 'auditoria-governamental', nome: 'Auditoria Governamental e Controle Interno', grupo: 'especializadas', peso: 2, topicos: [
+                    'Sistema de Controle Interno (Lei nº 10.180/2001, Decreto nº 3.591/2000)', 'MOT 2017', 'Instrução Normativa SFC nº 3/2017',
+                    'Orientação Prática: Relatório de Auditoria (Portaria nº 1.037/2019)',
+                    'Orientação Prática: Auditoria Anual de Contas (Portaria nº 2.035/2019)',
+                    'NBC TA Estrutura Conceitual', 'Estrutura Internacional de Práticas Profissionais (IPPF/IIA)',
+                    'Auditoria interna e gestão de riscos', 'Modelo de três linhas', 'Instrução Normativa Conjunta MPOG/CGU nº 1/2016'
+                ] },
+                { id: 'contabilidade-publica', nome: 'Contabilidade Aplicada ao Setor Público', grupo: 'especializadas', peso: 2, topicos: [
+                    'NBC TSP Estrutura Conceitual (objetivos, características qualitativas, entidade, elementos, reconhecimento, mensuração)',
+                    'Demonstrações contábeis (Lei nº 4.320/1964, NBC TSP 11, MCASP 9ª edição)',
+                    'Plano de Contas Aplicado ao Setor Público (PCASP): conceito, estrutura, atributos',
+                    'Tópicos da LRF (renúncia de receita, despesa obrigatória, dívida, RGF)',
+                    'Procedimentos contábeis orçamentários e patrimoniais (MCASP)',
+                    'Sistema de Informações de Custos (NBC T 16.11, Portaria STN nº 518/2018)'
+                ] },
+                { id: 'avaliacao-politicas', nome: 'Avaliação de Políticas Públicas', grupo: 'especializadas', peso: 2, topicos: [
+                    'Avaliação ex ante (guia Casa Civil/IPEA, volume 1)', 'Avaliação ex post (guia volume 2)',
+                    'Conselho de Monitoramento e Avaliação de Políticas Públicas (CMAP – Decreto nº 9.834/2019)'
+                ] },
+                { id: 'financas-publicas', nome: 'Finanças Públicas', grupo: 'especializadas', peso: 2, topicos: [
+                    'Objetivos, metas, funções do Estado, financiamento dos gastos, tributação e equidade',
+                    'Função do bem-estar, políticas alocativas, distributivas, estabilização',
+                    'Instrumentos da economia pública (política fiscal, regulatória, monetária)',
+                    'Tributação (tipos, progressividade, regressividade, neutralidade)', 'Federalismo fiscal',
+                    'Orçamento público no Brasil (PPA, LDO, LOA, Lei nº 4.320/1964, créditos adicionais)',
+                    'PPA (estrutura, objetivos, programas)', 'LDO (anexos fiscais, riscos, limitação de empenho)',
+                    'Classificações orçamentárias (despesa e receita)', 'Ciclo orçamentário (elaboração, execução, programação financeira, Conta Única)',
+                    'Lei nº 10.180/2001', 'Déficit público, financiamento, sustentabilidade fiscal',
+                    'Resultado fiscal (NFSP, primário, nominal)', 'Tópicos da LRF (princípios, transparência, prestação de contas)'
+                ] }
+            ]
+        };
+
+        const dadosProvaUFPB = {
+            totalQuestoes: 80,
+            ano: 2026,
+            distribuição: {
+                'lingua-portuguesa': 8,
+                'lingua-inglesa': 5,
+                'administracao-publica': 7,
+                'direito-constitucional': 10,
+                'direito-administrativo': 15,
+                'administracao-financeira': 8,
+                'fundamentos-auditoria': 5,
+                'controladoria-geral': 5,
+                'auditoria-governamental': 6,
+                'contabilidade-publica': 5,
+                'avaliacao-politicas': 3,
+                'financas-publicas': 3
+            },
+            pesoMedioPorDisciplina: {
+                'lingua-portuguesa': 1,
+                'lingua-inglesa': 1,
+                'administracao-publica': 1,
+                'direito-constitucional': 1.5,
+                'direito-administrativo': 1.5,
+                'administracao-financeira': 1.5,
+                'fundamentos-auditoria': 1.5,
+                'controladoria-geral': 1.5,
+                'auditoria-governamental': 2,
+                'contabilidade-publica': 2,
+                'avaliacao-politicas': 2,
+                'financas-publicas': 2
+            },
+            notaCorteEstimada: 45,
+            percentualAcertoMedio: 65
+        };
+
+        const disciplinaIconMap = {
+            'lingua-portuguesa': 'fa-solid fa-language',
+            'lingua-inglesa': 'fa-solid fa-flag-usa',
+            'administracao-publica': 'fa-solid fa-building',
+            'direito-constitucional': 'fa-solid fa-gavel',
+            'direito-administrativo': 'fa-solid fa-balance-scale',
+            'administracao-financeira': 'fa-solid fa-coins',
+            'fundamentos-auditoria': 'fa-solid fa-chart-line',
+            'controladoria-geral': 'fa-solid fa-magnifying-glass-chart',
+            'auditoria-governamental': 'fa-solid fa-file-signature',
+            'contabilidade-publica': 'fa-solid fa-calculator',
+            'avaliacao-politicas': 'fa-solid fa-chart-simple',
+            'financas-publicas': 'fa-solid fa-sack-dollar'
+        };
+                // ==================== VARIÁVEIS GLOBAIS E ESTADO ====================
+        let particlesAnimationId = null;
+        const LOGO_HERO_URL = "https://res.cloudinary.com/dew6hgzpv/image/upload/ChatGPT_Image_30_de_mai._de_2026_09_33_21_xgeowr.png";
+        const LINK_TOPICO_PLACEHOLDER = "https://drive.google.com/placeholder";
+        const LINK_CADERNO = 'https://drive.google.com/file/d/1DiHkDinYNfwAhnnkaDdlcCNdQCKy_xAJ/view?usp=sharing';
+        const INTERVALOS_REVISAO = [1, 7, 30];
+        const DIAS_SEMANA = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
+        const STORAGE_KEY = 'ufpb_assistente_admin_study_v14';
+
+        // Frases motivacionais
+        const frasesMotivacionais = [
+            { texto: "Cada página estudada hoje é um degrau para sua aprovação na UFPB.", categoria: "Foco no Objetivo" },
+            { texto: "O cargo de Assistente em Administração espera por quem não desiste.", categoria: "Foco no Objetivo" },
+            { texto: "Estudar para concurso é investir no seu futuro com retorno garantido.", categoria: "Foco no Objetivo" },
+            { texto: "Pensar em desistir é normal, mas continuar é o que aprova.", categoria: "Foco no Objetivo" },
+            { texto: "A estabilidade que você busca está no próximo capítulo.", categoria: "Foco no Objetivo" },
+            { texto: "Concurso público não premia inteligência, premia constância.", categoria: "Disciplina e Constância" },
+            { texto: "O edital é extenso, mas sua determinação é maior.", categoria: "Disciplina e Constância" },
+            { texto: "Melhore 1% todos os dias e a vaga será sua.", categoria: "Disciplina e Constância" },
+            { texto: "Disciplina é fazer o que precisa ser feito, mesmo sem vontade.", categoria: "Disciplina e Constância" },
+            { texto: "Cada questão resolvida hoje é um ponto a mais na prova.", categoria: "Disciplina e Constância" }
+        ];
+        let indiceFraseAtual = Math.floor(Math.random() * frasesMotivacionais.length);
+
+        // Estrutura de conquistas
+        const CONQUISTAS = [
+            { id: 'primeiro_topico', nome: 'Primeiro Passo', descricao: 'Concluir seu primeiro tópico', icone: 'fa-solid fa-flag', condicao: () => getProgressoGeral().concluidos >= 1 },
+            { id: '10_topicos', nome: 'Decolando', descricao: 'Concluir 10 tópicos', icone: 'fa-solid fa-rocket', condicao: () => getProgressoGeral().concluidos >= 10 },
+            { id: '25_topicos', nome: 'Metade do Caminho', descricao: 'Concluir 25 tópicos', icone: 'fa-solid fa-road', condicao: () => getProgressoGeral().concluidos >= 25 },
+            { id: '50_topicos', nome: 'Maestria', descricao: 'Concluir 50 tópicos', icone: 'fa-solid fa-crown', condicao: () => getProgressoGeral().concluidos >= 50 },
+            { id: '100_questoes', nome: 'Centenário', descricao: 'Resolver 100 questões', icone: 'fa-solid fa-file-pen', condicao: () => getTotalQuestoes().total >= 100 },
+            { id: '500_questoes', nome: 'Mestre das Questões', descricao: 'Resolver 500 questões', icone: 'fa-solid fa-graduation-cap', condicao: () => getTotalQuestoes().total >= 500 },
+            { id: '1000_questoes', nome: 'Lenda', descricao: 'Resolver 1000 questões', icone: 'fa-solid fa-star', condicao: () => getTotalQuestoes().total >= 1000 },
+            { id: 'streak_3', nome: 'Constância', descricao: '3 dias seguidos de estudo', icone: 'fa-solid fa-calendar-check', condicao: () => getStreak() >= 3 },
+            { id: 'streak_7', nome: 'Disciplina de Aço', descricao: '7 dias seguidos de estudo', icone: 'fa-solid fa-fire', condicao: () => getStreak() >= 7 },
+            { id: 'streak_14', nome: 'Imparável', descricao: '14 dias seguidos de estudo', icone: 'fa-solid fa-fire', condicao: () => getStreak() >= 14 },
+            { id: 'streak_30', nome: 'Força da Natureza', descricao: '30 dias seguidos de estudo', icone: 'fa-solid fa-bolt', condicao: () => getStreak() >= 30 },
+            { id: 'todas_disciplinas', nome: 'Visão Global', descricao: 'Iniciar todas as disciplinas', icone: 'fa-solid fa-globe', condicao: () => editalData.disciplinas.every(d => getProgressoDisciplina(d.id).pct > 0) },
+            { id: 'primeira_revisao', nome: 'Revisor', descricao: 'Registrar sua primeira revisão', icone: 'fa-solid fa-rotate-right', condicao: () => Object.values(appState.topicosRevisao).some(r => r.reviewCount > 0) },
+            { id: 'meta_diaria', nome: 'Missão Cumprida', descricao: 'Bater a meta diária de questões', icone: 'fa-solid fa-bullseye', condicao: () => false },
+            { id: 'plano_completo', nome: 'Dia Perfeito', descricao: 'Completar todos os itens do plano diário', icone: 'fa-solid fa-calendar-check', condicao: () => false }
+        ];
+
+        let appState = {
+            metaQuestoesDiaria: 50,
+            metaHorasDiaria: 5,
+            metaRevisoesSemana: 4,
+            dataInicio: new Date().toISOString().split('T')[0],
+            topicosConcluidos: {},
+            topicosRevisao: {},
+            questoes: {},
+            anotacoes: {},
+            metasPorDisciplina: {},
+            cicloAtual: 1,
+            historicoDiario: {},
+            ultimaAtividade: new Date().toISOString(),
+            planoDiarioConfig: {
+                modo: 'auto',
+                topicosPorDia: 3,
+                ciclo: { 'dom': [], 'seg': [], 'ter': [], 'qua': [], 'qui': [], 'sex': [], 'sab': [] },
+                incluirRevisoes: true
+            },
+            conquistasDesbloqueadas: {},
+            profilePic: '',
+            linksTopicos: {}
+        };
+
+        const progressoCache = {};
+
+        function getProgressoDisciplinaCache(discId) {
+            if (progressoCache[discId]) return progressoCache[discId];
+            const disc = editalData.disciplinas.find(d => d.id === discId);
+            if (!disc || !disc.topicos || disc.topicos.length === 0) return { pct: 0, concluidos: 0, iniciados: 0, total: 0 };
+            const total = disc.topicos.length;
+            let concluidos = 0, iniciados = 0;
+            disc.topicos.forEach((_, i) => {
+                const estado = appState.topicosConcluidos[`${discId}-${i}`] || 0;
+                if (estado === 2) concluidos++;
+                else if (estado === 1) iniciados++;
+            });
+            const pct = total > 0 ? Math.round(((concluidos + iniciados * 0.5) / total) * 100) : 0;
+            const res = { pct, concluidos, iniciados, total };
+            progressoCache[discId] = res;
+            return res;
+        }
+        function invalidateProgressoCache(discId) { delete progressoCache[discId]; }
+        function invalidateAllCache() { for (let k in progressoCache) delete progressoCache[k]; }
+
+        // ==================== REVISÃO ESPAÇADA ====================
+        function calcularProximaRevisao(reviewCount, lastStudied) {
+            if (reviewCount >= INTERVALOS_REVISAO.length) return null;
+            const dias = INTERVALOS_REVISAO[reviewCount];
+            const next = new Date(lastStudied);
+            next.setDate(next.getDate() + dias);
+            return next;
+        }
+        function registrarEstudoTopico(discId, topicoIndex) {
+            const key = `${discId}-${topicoIndex}`;
+            if (!appState.topicosRevisao[key]) {
+                appState.topicosRevisao[key] = { lastStudied: new Date().toISOString(), reviewCount: 0, nextReview: null };
+            }
+            const rev = appState.topicosRevisao[key];
+            rev.lastStudied = new Date().toISOString();
+            rev.nextReview = calcularProximaRevisao(rev.reviewCount, new Date(rev.lastStudied))?.toISOString() || null;
+            salvarState();
+        }
+        function registrarRevisaoTopico(discId, topicoIndex) {
+            const key = `${discId}-${topicoIndex}`;
+            if (!appState.topicosRevisao[key]) {
+                appState.topicosRevisao[key] = { lastStudied: new Date().toISOString(), reviewCount: 0, nextReview: null };
+            }
+            const rev = appState.topicosRevisao[key];
+            rev.reviewCount = Math.min(rev.reviewCount + 1, INTERVALOS_REVISAO.length);
+            rev.lastStudied = new Date().toISOString();
+            rev.nextReview = calcularProximaRevisao(rev.reviewCount, new Date(rev.lastStudied))?.toISOString() || null;
+            salvarState();
+        }
+        function getRevisoesPendentes() {
+            const now = new Date();
+            const pendentes = [];
+            editalData.disciplinas.forEach(disc => {
+                disc.topicos.forEach((topicoNome, i) => {
+                    const key = `${disc.id}-${i}`;
+                    const rev = appState.topicosRevisao[key];
+                    if (rev && rev.nextReview) {
+                        const nextDate = new Date(rev.nextReview);
+                        if (nextDate <= now) {
+                            const atrasadoDias = Math.floor((now - nextDate) / (1000 * 60 * 60 * 24));
+                            pendentes.push({ discId: disc.id, topicoIndex: i, topicoNome, disciplinaNome: disc.nome, nextReview: nextDate, atrasadoDias });
+                        }
+                    }
+                });
+            });
+            pendentes.sort((a, b) => b.atrasadoDias - a.atrasadoDias);
+            return pendentes;
+        }
+        function getTotalRevisoesPendentes() { return getRevisoesPendentes().length; }
+
+        // ==================== PLANEJADOR DIÁRIO ====================
+        function getDiaSemanaAtual() { return DIAS_SEMANA[new Date().getDay()]; }
+        function getTopicosNaoConcluidos(disciplinaId) {
+            const disc = editalData.disciplinas.find(d => d.id === disciplinaId);
+            if (!disc) return [];
+            const naoConcluidos = [];
+            disc.topicos.forEach((topicoNome, i) => {
+                const estado = appState.topicosConcluidos[`${disciplinaId}-${i}`] || 0;
+                if (estado !== 2) {
+                    naoConcluidos.push({ discId: disciplinaId, topicoIndex: i, topicoNome, disciplinaNome: disc.nome, estado, grupo: disc.grupo, peso: disc.peso });
+                }
+            });
+            return naoConcluidos;
+        }
+        function gerarPlanoAutomatico(limite) {
+            const prioridades = editalData.disciplinas.map(disc => {
+                const progresso = getProgressoDisciplina(disc.id).pct;
+                const peso = disc.peso;
+                const questoes = dadosProvaUFPB.distribuição[disc.id] || 0;
+                const fatorProgresso = (100 - progresso) / 100;
+                const score = peso * fatorProgresso * (questoes / 20);
+                return { discId: disc.id, nome: disc.nome, progresso, peso, questoes, score };
+            }).sort((a, b) => b.score - a.score);
+            const selecionados = [];
+            for (const prio of prioridades) {
+                if (selecionados.length >= limite) break;
+                const pendentes = getTopicosNaoConcluidos(prio.discId);
+                for (const topico of pendentes) {
+                    if (selecionados.length >= limite) break;
+                    selecionados.push(topico);
+                }
+            }
+            return selecionados;
+        }
+        function gerarPlanoDiario() {
+            const config = appState.planoDiarioConfig;
+            const topicosPorDia = config.topicosPorDia || 3;
+            let topicosSelecionados = [];
+            if (config.modo === 'ciclo') {
+                const diaSemana = getDiaSemanaAtual();
+                const disciplinasDoDia = config.ciclo[diaSemana] || [];
+                if (disciplinasDoDia.length > 0) {
+                    disciplinasDoDia.forEach(discId => {
+                        const pendentes = getTopicosNaoConcluidos(discId);
+                        topicosSelecionados = topicosSelecionados.concat(pendentes);
+                    });
+                    topicosSelecionados = topicosSelecionados.slice(0, topicosPorDia);
+                } else {
+                    topicosSelecionados = gerarPlanoAutomatico(topicosPorDia);
+                }
+            } else {
+                topicosSelecionados = gerarPlanoAutomatico(topicosPorDia);
+            }
+            let revisoes = [];
+            if (config.incluirRevisoes) {
+                revisoes = getRevisoesPendentes();
+            }
+            return { novosTopicos: topicosSelecionados, revisoes };
+        }
+
+        function verificarPlanoCompleto() {
+            const plano = gerarPlanoDiario();
+            const totalItens = plano.novosTopicos.length + plano.revisoes.length;
+            if (totalItens === 0) return false;
+            let todosConcluidos = true;
+            for (const t of plano.novosTopicos) {
+                const estado = appState.topicosConcluidos[`${t.discId}-${t.topicoIndex}`] || 0;
+                if (estado !== 2) { todosConcluidos = false; break; }
+            }
+            if (todosConcluidos) {
+                for (const r of plano.revisoes) {
+                    const rev = appState.topicosRevisao[`${r.discId}-${r.topicoIndex}`];
+                    if (!rev || rev.reviewCount === 0) { todosConcluidos = false; break; }
+                }
+            }
+            if (todosConcluidos && !appState.conquistasDesbloqueadas['plano_completo']) {
+                appState.conquistasDesbloqueadas['plano_completo'] = new Date().toISOString();
+                salvarState();
+                return true;
+            }
+            return false;
+        }
+
+        // ==================== CONQUISTAS E RECOMPENSAS ====================
+        function verificarConquistas() {
+            const novas = [];
+            CONQUISTAS.forEach(c => {
+                if (c.id === 'meta_diaria' || c.id === 'plano_completo') return;
+                if (!appState.conquistasDesbloqueadas[c.id] && c.condicao()) {
+                    appState.conquistasDesbloqueadas[c.id] = new Date().toISOString();
+                    novas.push(c);
+                }
+            });
+            if (novas.length > 0) {
+                salvarState();
+                novas.forEach(c => toast(`🏆 Conquista desbloqueada: <strong>${c.nome}</strong> — ${c.descricao}`));
+            }
+            return novas;
+        }
+        function verificarMetaDiaria() {
+            const hoje = new Date().toISOString().split('T')[0];
+            const jaCelebrou = appState.historicoDiario[`meta_batida_${hoje}`];
+            if (jaCelebrou) return false;
+            const totalQ = getTotalQuestoes().total;
+            const dias = Math.max(1, Math.floor((new Date() - new Date(appState.dataInicio)) / (1000 * 60 * 60 * 24)));
+            const mediaDiaria = Math.round(totalQ / dias);
+            const meta = appState.metaQuestoesDiaria;
+            if (mediaDiaria >= meta && totalQ >= meta) {
+                appState.historicoDiario[`meta_batida_${hoje}`] = true;
+                if (!appState.conquistasDesbloqueadas['meta_diaria']) {
+                    appState.conquistasDesbloqueadas['meta_diaria'] = new Date().toISOString();
+                }
+                salvarState();
+                return true;
+            }
+            return false;
+        }
+        function celebrarMetaDiaria() {
+            const overlay = document.createElement('div');
+            overlay.className = 'celebracao-overlay';
+            overlay.onclick = () => overlay.remove();
+            overlay.innerHTML = `<div class="celebracao-card" onclick="event.stopPropagation()"><span class="emoji">🎉</span><h2>Parabéns!</h2><p>Você bateu sua meta diária de questões hoje!</p><p style="font-size:0.85rem;color:var(--text-secondary);margin-top:8px;">Continue assim e a aprovação será consequência.</p><button class="btn btn-accent" style="margin-top:16px;" onclick="this.closest('.celebracao-overlay').remove()">✨ Continuar</button></div>`;
+            document.body.appendChild(overlay);
+            dispararConfetes();
+        }
+        function dispararConfetes() {
+            const container = document.getElementById('confettiContainer');
+            const cores = ['#077ADC', '#E2970D', '#10B981', '#E91B00', '#F4E05C', '#4AA3FF', '#8B5CF6', '#EC4899'];
+            for (let i = 0; i < 60; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.left = Math.random() * 100 + '%';
+                piece.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
+                piece.style.width = (Math.random() * 8 + 6) + 'px';
+                piece.style.height = (Math.random() * 8 + 6) + 'px';
+                piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                piece.style.animationDelay = Math.random() * 0.5 + 's';
+                piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                container.appendChild(piece);
+                setTimeout(() => piece.remove(), 3000);
+            }
+        }
+        function dispararConfetesTopico() {
+            const container = document.getElementById('confettiContainer');
+            const cores = ['#077ADC', '#10B981', '#F4E05C', '#4AA3FF'];
+            for (let i = 0; i < 30; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.left = Math.random() * 100 + '%';
+                piece.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
+                piece.style.width = (Math.random() * 6 + 4) + 'px';
+                piece.style.height = (Math.random() * 6 + 4) + 'px';
+                piece.style.animationDuration = (Math.random() * 1.5 + 1.5) + 's';
+                piece.style.animationDelay = Math.random() * 0.3 + 's';
+                piece.style.borderRadius = '50%';
+                container.appendChild(piece);
+                setTimeout(() => piece.remove(), 2500);
+            }
+        }
+
+        // ==================== PERSISTÊNCIA ====================
+        function carregarState() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    appState = { ...appState, ...parsed };
+                    if (appState.topicosConcluidos) {
+                        const migrado = {};
+                        for (const [key, val] of Object.entries(appState.topicosConcluidos)) {
+                            if (val === true || val === 1 || val === 2) migrado[key] = val === true ? 2 : val;
+                            else if (val === false || val === 0) migrado[key] = 0;
+                            else migrado[key] = 0;
+                        }
+                        appState.topicosConcluidos = migrado;
+                    }
+                    if (!appState.planoDiarioConfig) appState.planoDiarioConfig = { modo: 'auto', topicosPorDia: 3, ciclo: { 'dom': [], 'seg': [], 'ter': [], 'qua': [], 'qui': [], 'sex': [], 'sab': [] }, incluirRevisoes: true };
+                    if (!appState.planoDiarioConfig.ciclo) appState.planoDiarioConfig.ciclo = { 'dom': [], 'seg': [], 'ter': [], 'qua': [], 'qui': [], 'sex': [], 'sab': [] };
+                    DIAS_SEMANA.forEach(dia => { if (!appState.planoDiarioConfig.ciclo[dia]) appState.planoDiarioConfig.ciclo[dia] = []; });
+                    if (!appState.conquistasDesbloqueadas) appState.conquistasDesbloqueadas = {};
+                    if (!appState.profilePic) appState.profilePic = '';
+                    if (!appState.linksTopicos) appState.linksTopicos = {};
+                }
+                if (!appState.topicosConcluidos) appState.topicosConcluidos = {};
+                if (!appState.topicosRevisao) appState.topicosRevisao = {};
+                if (!appState.questoes) appState.questoes = {};
+                if (!appState.anotacoes) appState.anotacoes = {};
+                if (!appState.metasPorDisciplina) appState.metasPorDisciplina = {};
+                if (!appState.historicoDiario) appState.historicoDiario = {};
+                if (!appState.planoDiarioConfig) appState.planoDiarioConfig = { modo: 'auto', topicosPorDia: 3, ciclo: { 'dom': [], 'seg': [], 'ter': [], 'qua': [], 'qui': [], 'sex': [], 'sab': [] }, incluirRevisoes: true };
+                if (!appState.conquistasDesbloqueadas) appState.conquistasDesbloqueadas = {};
+                if (!appState.profilePic) appState.profilePic = '';
+                if (!appState.linksTopicos) appState.linksTopicos = {};
+                invalidateAllCache();
+            } catch (e) {}
+        }
+        function salvarState() { appState.ultimaAtividade = new Date().toISOString(); localStorage.setItem(STORAGE_KEY, JSON.stringify(appState)); invalidateAllCache(); }
+        function toast(msg) { const t = document.getElementById('toast'); t.innerHTML = msg; t.classList.remove('hidden'); clearTimeout(t._timeout); t._timeout = setTimeout(() => t.classList.add('hidden'), 3500); }
+        function getProgressoDisciplina(discId) { return getProgressoDisciplinaCache(discId); }
+        function getProgressoGeral() {
+            let total = 0, concluidos = 0, iniciados = 0;
+            editalData.disciplinas.forEach(d => {
+                if (!d.topicos) return;
+                d.topicos.forEach((_, i) => {
+                    total++;
+                    const estado = appState.topicosConcluidos[`${d.id}-${i}`] || 0;
+                    if (estado === 2) concluidos++;
+                    else if (estado === 1) iniciados++;
+                });
+            });
+            const pct = total > 0 ? Math.round(((concluidos + iniciados * 0.5) / total) * 100) : 0;
+            return { pct, concluidos, iniciados, total };
+        }
+        function getTotalQuestoes() {
+            let total = 0, corretas = 0;
+            Object.values(appState.questoes).forEach(q => { total += (q.resolvidas || 0); corretas += (q.corretas || 0); });
+            return { total, corretas, pct: total > 0 ? Math.round((corretas / total) * 100) : 0 };
+        }
+        function getQuestoesDisciplina(id) { return appState.questoes[id] || { resolvidas: 0, corretas: 0 }; }
+        function getStreak() {
+            const hoje = new Date(); hoje.setHours(0,0,0,0);
+            let streak = 0;
+            const check = new Date(hoje);
+            while (streak < 365) {
+                const key = check.toISOString().split('T')[0];
+                if (appState.historicoDiario[key]) { streak++; check.setDate(check.getDate() - 1); }
+                else break;
+            }
+            return streak;
+        }
+        function registrarAtividadeHoje() { const hoje = new Date().toISOString().split('T')[0]; appState.historicoDiario[hoje] = true; salvarState(); }
+
+        // ==================== BACKUP E EXPORTAÇÃO ====================
+        function exportarBackup() {
+            const dados = JSON.stringify(appState, null, 2);
+            const blob = new Blob([dados], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `backup_ufpb_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            toast('<i class="fa-solid fa-download"></i> Backup exportado!');
+        }
+        function importarBackup() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (event) => { try { const dados = JSON.parse(event.target.result); if (dados.topicosConcluidos === undefined || dados.questoes === undefined) throw new Error('Inválido'); if (confirm('⚠️ Substituir todos os dados pelo backup?')) { appState = { ...appState, ...dados }; carregarState(); salvarState(); invalidateAllCache(); toast('<i class="fa-solid fa-upload"></i> Restaurado!'); setTimeout(() => location.reload(), 1500); } } catch (err) { toast('<i class="fa-solid fa-circle-exclamation"></i> Arquivo inválido.'); } }; reader.readAsText(file); };
+            input.click();
+        }
+
+        // ==================== FUNÇÕES DE RENDERIZAÇÃO (resumo - serão completadas na parte 3) ====================
+        let currentTab = 'dashboard';
+        let chartInstances = {};
+        function destruirGraficos() { Object.values(chartInstances).forEach(c => { try { c.destroy(); } catch (e) {} }); chartInstances = {}; }
+        function stopParticles() { if (particlesAnimationId) { cancelAnimationFrame(particlesAnimationId); particlesAnimationId = null; } }
+
+        function navegar(tab) {
+            destruirGraficos();
+            stopParticles();
+            currentTab = tab;
+            document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+            const link = document.querySelector(`.sidebar-nav a[data-tab="${tab}"]`);
+            if (link) link.classList.add('active');
+            const icons = { 'dashboard': 'fa-chart-pie', 'plano': 'fa-calendar-check', 'disciplinas': 'fa-book-open', 'questoes': 'fa-file-pen', 'revisoes': 'fa-arrows-rotate', 'metas': 'fa-bullseye', 'estatisticas': 'fa-chart-line', 'conquistas': 'fa-trophy' };
+            const titles = { 'dashboard': 'Dashboard', 'plano': 'Plano Diário', 'disciplinas': 'Disciplinas', 'questoes': 'Questões', 'revisoes': 'Revisões do Dia', 'metas': 'Metas', 'estatisticas': 'Estatísticas', 'conquistas': 'Conquistas' };
+            document.getElementById('pageTitle').innerHTML = `<i class="fa-solid ${icons[tab]}"></i> ${titles[tab]}`;
+            renderizarTab(tab);
+            if (tab === 'dashboard') { setTimeout(initGraficosDashboard, 400); setTimeout(animarContadores, 300); }
+            if (tab === 'estatisticas') setTimeout(initGraficosEstatisticas, 500);
+            fecharSidebar();
+        }
+
+        function renderizarTab(tab) { const area = document.getElementById('contentArea'); const renders = { 'dashboard': renderDashboard, 'plano': renderPlanoDiario, 'disciplinas': renderDisciplinas, 'questoes': renderQuestoes, 'revisoes': renderRevisoes, 'metas': renderMetas, 'estatisticas': renderEstatisticas, 'conquistas': renderConquistas }; area.innerHTML = (renders[tab] || renderDashboard)(); }
+
+        // As funções de renderização completas estão na Parte 3/4
+                // ==================== FUNÇÕES DE RENDERIZAÇÃO (COMPLETAS) ====================
+        function renderizarFraseMotivacional() {
+            const frase = frasesMotivacionais[indiceFraseAtual];
+            return `<div class="motivational-card" id="motivationalCard"><div class="frase-texto">${frase.texto}</div><div class="frase-categoria">${frase.categoria}</div><div class="frase-nav"><button onclick="fraseAnterior();event.stopPropagation();"><i class="fa-solid fa-chevron-left"></i></button><button onclick="proximaFrase();event.stopPropagation();"><i class="fa-solid fa-chevron-right"></i></button></div></div>`;
+        }
+        function proximaFrase() { indiceFraseAtual = (indiceFraseAtual + 1) % frasesMotivacionais.length; atualizarFraseNoDOM(); }
+        function fraseAnterior() { indiceFraseAtual = (indiceFraseAtual - 1 + frasesMotivacionais.length) % frasesMotivacionais.length; atualizarFraseNoDOM(); }
+        function atualizarFraseNoDOM() {
+            const card = document.getElementById('motivationalCard');
+            if (card) {
+                const frase = frasesMotivacionais[indiceFraseAtual];
+                card.querySelector('.frase-texto').textContent = frase.texto;
+                card.querySelector('.frase-categoria').textContent = frase.categoria;
+                card.style.opacity = '0.6'; card.style.transform = 'scale(0.99)';
+                setTimeout(() => { card.style.opacity = '1'; card.style.transform = 'scale(1)'; }, 150);
+            }
+        }
+
+        function renderDashboard() {
+            const geral = getProgressoGeral();
+            const questoes = getTotalQuestoes();
+            const dias = Math.max(1, Math.floor((new Date() - new Date(appState.dataInicio)) / (1000*60*60*24)));
+            const streak = getStreak();
+            const horasEst = Math.round(appState.metaHorasDiaria * dias);
+            const saudacao = new Date().getHours() < 12 ? 'Bom dia' : new Date().getHours() < 18 ? 'Boa tarde' : 'Boa noite';
+            const revisoesPendentes = getTotalRevisoesPendentes();
+            const plano = gerarPlanoDiario();
+            const totalPlano = plano.novosTopicos.length + plano.revisoes.length;
+            const conquistasCount = Object.keys(appState.conquistasDesbloqueadas).length;
+            const totalConquistas = CONQUISTAS.length;
+            registrarAtividadeHoje();
+            return `
+            <div class="hero" style="background:linear-gradient(135deg,#08467C 0%,#077ADC 55%,#4AA3FF 100%);border-radius:20px;padding:36px 40px;margin-bottom:24px;color:#fff;position:relative;overflow:hidden;box-shadow:0 10px 30px rgba(8,70,124,.25);">
+                <canvas id="particlesCanvas"></canvas>
+                <img src="${LOGO_HERO_URL}" alt="" class="hero-bg-image">
+                <h2 style="font-size:1.9rem;font-weight:800;">${saudacao} 👋</h2>
+                <p style="opacity:.85;margin-bottom:24px;">Sua preparação para UFPB – Assistente em Administração está avançando.</p>
+                <div class="hero-stats" style="display:flex;gap:20px;flex-wrap:wrap;">
+                    <div class="hero-stat" style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.12);border-radius:16px;padding:14px 22px;"><i class="fa-solid fa-chart-line" style="font-size:1.8rem;"></i><div><div class="hero-stat-value" style="font-size:1.6rem;font-weight:800;">${geral.pct}%</div><div style="font-size:.7rem;opacity:.8;">Edital</div></div></div>
+                    <div class="hero-stat" style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.12);border-radius:16px;padding:14px 22px;"><i class="fa-solid fa-clock" style="font-size:1.8rem;"></i><div><div class="hero-stat-value" style="font-size:1.6rem;font-weight:800;">+${horasEst}h</div><div style="font-size:.7rem;opacity:.8;">Horas</div></div></div>
+                    <div class="hero-stat" style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.12);border-radius:16px;padding:14px 22px;"><i class="fa-solid fa-fire" style="font-size:1.8rem;"></i><div><div class="hero-stat-value" style="font-size:1.6rem;font-weight:800;">${streak} dias</div><div style="font-size:.7rem;opacity:.8;">Sequência</div></div></div>
+                    <div class="hero-stat" style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.12);border-radius:16px;padding:14px 22px;cursor:pointer;" onclick="navegar('conquistas')"><i class="fa-solid fa-trophy" style="font-size:1.8rem;"></i><div><div class="hero-stat-value" style="font-size:1.6rem;font-weight:800;">${conquistasCount}/${totalConquistas}</div><div style="font-size:.7rem;opacity:.8;">Conquistas</div></div></div>
+                    ${revisoesPendentes > 0 ? `<div class="hero-stat" style="display:flex;align-items:center;gap:12px;background:rgba(233,27,0,.25);border-radius:16px;padding:14px 22px;cursor:pointer;" onclick="navegar('revisoes')"><i class="fa-solid fa-arrows-rotate" style="font-size:1.8rem;"></i><div><div class="hero-stat-value" style="font-size:1.6rem;font-weight:800;">${revisoesPendentes}</div><div style="font-size:.7rem;opacity:.9;">A revisar</div></div></div>` : ''}
+                </div>
+            </div>
+            ${renderizarFraseMotivacional()}
+            <div class="card card-destaque"><div class="card-header"><h3><i class="fa-solid fa-calendar-check" style="color:#077ADC;"></i> Hoje: ${totalPlano} itens no plano</h3><button class="btn btn-primary btn-sm" onclick="navegar('plano')"><i class="fa-solid fa-list-check"></i> Ver Plano Completo</button></div>
+            <div style="display:flex; gap:20px; flex-wrap:wrap;"><div style="flex:1; min-width:200px;"><p style="font-size:0.85rem; font-weight:600; margin-bottom:8px; color:var(--text-secondary);">📘 Novos Tópicos (${plano.novosTopicos.length})</p>${plano.novosTopicos.length === 0 ? '<p style="font-size:0.8rem; color:var(--muted);">Nenhum tópico pendente para hoje.</p>' : plano.novosTopicos.slice(0,3).map(t => `<div style="font-size:0.8rem; margin-bottom:4px; display:flex; align-items:center; gap:6px;"><span class="badge badge-plano">${t.disciplinaNome}</span> ${t.topicoNome}</div>`).join('')}${plano.novosTopicos.length > 3 ? `<p style="font-size:0.75rem; color:var(--muted);">+${plano.novosTopicos.length - 3} outros</p>` : ''}</div>
+            <div style="flex:1; min-width:200px;"><p style="font-size:0.85rem; font-weight:600; margin-bottom:8px; color:#E91B00;">🔄 Revisões (${plano.revisoes.length})</p>${plano.revisoes.length === 0 ? '<p style="font-size:0.8rem; color:#10B981;">✅ Nenhuma revisão atrasada!</p>' : plano.revisoes.slice(0,3).map(r => `<div style="font-size:0.8rem; margin-bottom:4px; display:flex; align-items:center; gap:6px;"><span class="badge badge-revisao">${r.disciplinaNome}</span> ${r.topicoNome}</div>`).join('')}${plano.revisoes.length > 3 ? `<p style="font-size:0.75rem; color:var(--muted);">+${plano.revisoes.length - 3} outras</p>` : ''}</div></div></div>
+            <div class="card"><div class="card-header"><h3><i class="fa-solid fa-rocket" style="color:#077ADC;"></i> Missão UFPB</h3><div style="display:flex;align-items:center;gap:16px;"><span>${geral.concluidos} concluídos · ${geral.iniciados} iniciados · ${geral.total} total</span><span class="badge badge-aprovacao" style="font-size:0.75rem;padding:6px 14px;"><i class="fa-solid fa-flag-checkered"></i> Aprovação</span></div></div>
+            <div class="foguete-container"><div class="foguete-icone" style="left:${Math.min(geral.pct,97)}%;"><i class="fa-solid fa-rocket"></i></div><div class="foguete-track"><div class="foguete-progress" style="width:${geral.pct}%;"></div></div><div class="foguete-label" style="left:${Math.min(geral.pct,90)}%;">${geral.pct}%</div></div></div>
+            <div class="kpi-grid">
+                <div class="kpi-card"><div class="kpi-icon green"><i class="fa-solid fa-circle-check"></i></div><div class="kpi-info"><div class="kpi-value">${geral.concluidos}</div><div class="kpi-label">Tópicos Concluídos</div></div></div>
+                <div class="kpi-card"><div class="kpi-icon amber"><i class="fa-solid fa-spinner"></i></div><div class="kpi-info"><div class="kpi-value">${geral.iniciados}</div><div class="kpi-label">Tópicos Iniciados</div></div></div>
+                <div class="kpi-card"><div class="kpi-icon purple"><i class="fa-solid fa-bullseye"></i></div><div class="kpi-info"><div class="kpi-value">${geral.total}</div><div class="kpi-label">Total de Tópicos</div></div></div>
+                <div class="kpi-card"><div class="kpi-icon blue"><i class="fa-solid fa-file-pen"></i></div><div class="kpi-info"><div class="kpi-value">${questoes.total}</div><div class="kpi-label">Questões Resolvidas</div></div></div>
+                <div class="kpi-card" style="${revisoesPendentes > 0 ? 'border:2px solid #E91B00;' : ''} cursor:pointer;" onclick="navegar('revisoes')"><div class="kpi-icon red"><i class="fa-solid fa-arrows-rotate"></i></div><div class="kpi-info"><div class="kpi-value">${revisoesPendentes}</div><div class="kpi-label">Revisões Pendentes ${revisoesPendentes > 0 ? '<span class="badge badge-revisao">AGORA</span>' : ''}</div></div></div>
+                <div class="kpi-card" style="cursor:pointer;" onclick="navegar('conquistas')"><div class="kpi-icon gold"><i class="fa-solid fa-trophy"></i></div><div class="kpi-info"><div class="kpi-value">${conquistasCount}</div><div class="kpi-label">Conquistas ${conquistasCount === totalConquistas ? '<span class="badge badge-conquista">🏆 COMPLETO</span>' : ''}</div></div></div>
+            </div>
+            <div class="card" style="border:2px solid #E2970D;"><div class="card-header"><h3><i class="fa-solid fa-file-excel" style="color:#E2970D;"></i> Exportar Dados</h3></div><p style="font-size:0.85rem;margin-bottom:16px;">Baixe uma planilha completa com todo o seu progresso, tópicos, metas e estatísticas.</p><button class="btn btn-export" onclick="exportarPlanilhaExcel()"><i class="fa-solid fa-download"></i> 📥 Exportar Planilha</button></div>
+            <div class="charts-row"><div class="card"><div class="card-header"><h3>Progresso por Disciplina</h3></div><div class="chart-container"><canvas id="chartDisciplinas"></canvas></div></div><div class="card"><div class="card-header"><h3>Por Grupo</h3></div><div class="chart-container"><canvas id="chartGrupos"></canvas></div></div></div>`;
+        }
+
+        function initGraficosDashboard() {
+            const ctxBar = document.getElementById('chartDisciplinas')?.getContext('2d');
+            if (ctxBar) {
+                const labels = editalData.disciplinas.map(d => d.nome.substring(0,30)+'...');
+                const data = editalData.disciplinas.map(d => getProgressoDisciplina(d.id).pct);
+                const colors = data.map(v => v<30?'#E91B00':v<70?'#E2970D':'#10B981');
+                chartInstances['bar'] = new Chart(ctxBar, { type:'bar', data:{ labels, datasets:[{ data, backgroundColor:colors, borderRadius:8, barThickness:14 }] }, options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ x:{ max:100, grid:{ color:'#E2E8F0' } } } } });
+            }
+            const ctxDonut = document.getElementById('chartGrupos')?.getContext('2d');
+            if (ctxDonut) {
+                const gruposData = {};
+                editalData.disciplinas.forEach(d => { const g = d.grupo; if (!gruposData[g]) gruposData[g] = { total:0, concluidos:0, iniciados:0 }; const p = getProgressoDisciplina(d.id); gruposData[g].total += p.total; gruposData[g].concluidos += p.concluidos; gruposData[g].iniciados += p.iniciados; });
+                const labels = Object.keys(gruposData).map(k => editalData.grupos[k].nome);
+                const data = Object.values(gruposData).map(v => v.total>0?Math.round(((v.concluidos+v.iniciados*0.5)/v.total)*100):0);
+                chartInstances['donut'] = new Chart(ctxDonut, { type:'doughnut', data:{ labels, datasets:[{ data, backgroundColor:['#077ADC','#E2970D','#10B981'], borderWidth:3, borderColor:'#fff', borderRadius:6 }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ padding:16, usePointStyle:true } } }, cutout:'65%' } });
+            }
+        }
+
+        function initGraficosEstatisticas() {
+            const ctxDist = document.getElementById('chartDistribuicaoProva')?.getContext('2d');
+            if (ctxDist) {
+                const labels = editalData.disciplinas.map(d => d.nome.substring(0,25)+'...');
+                const data = editalData.disciplinas.map(d => dadosProvaUFPB.distribuição[d.id] || 0);
+                chartInstances['distProva'] = new Chart(ctxDist, { type:'bar', data:{ labels, datasets:[{ data, backgroundColor:'#077ADC', borderRadius:8 }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } } } });
+            }
+            const ctxBubble = document.getElementById('chartImportanciaProgresso')?.getContext('2d');
+            if (ctxBubble) {
+                const pontos = editalData.disciplinas.map(d => ({ x: getProgressoDisciplina(d.id).pct, y: (dadosProvaUFPB.distribuição[d.id]||0), r: (dadosProvaUFPB.pesoMedioPorDisciplina[d.id]||1)*8, label: d.nome }));
+                chartInstances['bubble'] = new Chart(ctxBubble, { type:'bubble', data:{ datasets:[{ data:pontos, backgroundColor:'rgba(7,122,220,0.6)', borderColor:'#077ADC', borderWidth:1 }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{ tooltip:{ callbacks:{ label:(ctx)=>`${ctx.raw.label}: Progresso ${ctx.raw.x}%, Questões ${ctx.raw.y}` } }, legend:{ display:false } }, scales:{ x:{ title:{ display:true, text:'Seu Progresso (%)' }, max:100, grid:{ color:'#E2E8F0' } }, y:{ title:{ display:true, text:'Questões na Prova' }, grid:{ color:'#E2E8F0' } } } } });
+            }
+            const ctxRadar = document.getElementById('chartRadarDesempenho')?.getContext('2d');
+            if (ctxRadar) {
+                const labels = editalData.disciplinas.map(d => d.nome.substring(0,20)+'...');
+                const progressoAtual = editalData.disciplinas.map(d => getProgressoDisciplina(d.id).pct);
+                chartInstances['radar'] = new Chart(ctxRadar, { type:'radar', data:{ labels, datasets:[ { label:'Seu Progresso', data:progressoAtual, backgroundColor:'rgba(7,122,220,0.2)', borderColor:'#077ADC', borderWidth:2, pointBackgroundColor:'#077ADC' }, { label:'Meta Ideal (75%)', data:labels.map(()=>75), backgroundColor:'rgba(16,185,129,0.1)', borderColor:'#10B981', borderWidth:2, borderDash:[6,4], pointBackgroundColor:'#10B981' } ] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ usePointStyle:true, padding:16 } } }, scales:{ r:{ max:100, ticks:{ stepSize:20 }, grid:{ color:'#E2E8F0' }, pointLabels:{ font:{ size:10 } } } } } });
+            }
+        }
+
+        function animarContadores() {
+            document.querySelectorAll('.kpi-value').forEach(el => {
+                const final = parseInt(el.textContent) || 0;
+                if (final === 0) return;
+                let startTime = null;
+                const step = (timestamp) => {
+                    if (!startTime) startTime = timestamp;
+                    const progress = Math.min((timestamp - startTime) / 800, 1);
+                    el.textContent = Math.floor(progress * final);
+                    if (progress < 1) requestAnimationFrame(step);
+                    else el.textContent = final;
+                };
+                requestAnimationFrame(step);
+            });
+        }
+
+        function initParticles() {
+            stopParticles();
+            const canvas = document.getElementById('particlesCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            const hero = canvas.parentElement;
+            function resize() { canvas.width = hero.offsetWidth; canvas.height = hero.offsetHeight; }
+            resize();
+            window.addEventListener('resize', resize);
+            for (let i=0; i<40; i++) { particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.4, vy: (Math.random()-0.5)*0.4, r: Math.random()*2+1 }); }
+            function draw() {
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+                particles.forEach(p => { p.x += p.vx; p.y += p.vy; if (p.x<0||p.x>canvas.width) p.vx *= -1; if (p.y<0||p.y>canvas.height) p.vy *= -1; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fill(); });
+                particlesAnimationId = requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        function getLinkTopico(discId, idx) { const chave = `${discId}-${idx}`; return appState.linksTopicos[chave] || LINK_TOPICO_PLACEHOLDER; }
+
+        function renderDisciplinas() {
+            let html = `<div class="card"><div class="card-header"><h3><i class="fa-solid fa-book-open"></i> Disciplinas</h3><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;"><input type="text" class="search-input" placeholder="🔍 Pesquisar..." id="searchDisciplina" oninput="filtrarDisciplinas()"><button class="btn btn-outline btn-sm" onclick="filtrarGrupo('todas')">Todas</button>`;
+            Object.entries(editalData.grupos).forEach(([k,v]) => html += `<button class="btn btn-outline btn-sm" style="margin-left:4px;" onclick="filtrarGrupo('${k}')">${v.nome}</button>`);
+            html += `</div></div><div id="disciplinasList">`;
+            editalData.disciplinas.forEach(d => {
+                const p = getProgressoDisciplina(d.id); const q = getQuestoesDisciplina(d.id);
+                let starCount = d.peso === 1 ? 2 : d.peso === 1.5 ? 3 : 4;
+                let starsHtml = ''; for (let i=0;i<4;i++) starsHtml += `<i class="fa-solid fa-star" style="color: ${i < starCount ? '#E2970D' : '#CBD5E1'}; font-size:0.9rem; margin-right:2px;"></i>`;
+                html += `<div class="disciplina-row" data-grupo="${d.grupo}" data-nome="${d.nome.toLowerCase()}" style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border:1px solid var(--border);border-radius:12px;margin-bottom:6px;transition:all .25s;"><div style="flex:1;min-width:180px;cursor:pointer;" onclick="event.stopPropagation(); abrirDisciplina('${d.id}')"><div style="font-weight:600;">${getIcon(d.id)} ${d.nome}</div><div style="font-size:.7rem;color:var(--text-secondary);"><span class="badge ${editalData.grupos[d.grupo].badgeClass}">${editalData.grupos[d.grupo].nome}</span> · Peso ${d.peso} · ${p.total} tópicos</div></div><div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;"><div class="disc-stats" style="display:flex;gap:16px;align-items:center;cursor:pointer;" onclick="event.stopPropagation(); abrirDisciplina('${d.id}')"><div style="text-align:center;"><div style="font-weight:700;">${p.pct}%</div><div style="font-size:.62rem;color:var(--text-secondary);">Progresso</div></div><div style="text-align:center;"><div style="font-weight:700;color:#059669;">${p.concluidos}</div><div style="font-size:.62rem;color:var(--text-secondary);">Concluídos</div></div><div style="text-align:center;"><div style="font-weight:700;color:#E2970D;">${p.iniciados}</div><div style="font-size:.62rem;color:var(--text-secondary);">Iniciados</div></div><div style="text-align:center;"><div style="font-weight:700;">${q.resolvidas||0}</div><div style="font-size:.62rem;color:var(--text-secondary);">Questões</div></div></div><div style="display:flex;align-items:center;gap:8px;"><span title="Peso: ${d.peso}" style="white-space:nowrap;">${starsHtml}</span><a href="${LINK_CADERNO}" target="_blank" class="btn btn-download btn-sm" onclick="event.stopPropagation();" title="Baixar Caderno de Estudos"><i class="fa-solid fa-download"></i> Caderno</a></div></div></div>`;
+            });
+            return html + `</div></div>`;
+        }
+        let filtroGrupoAtual = 'todas';
+        function filtrarGrupo(g) { filtroGrupoAtual = g; filtrarDisciplinas(); }
+        function filtrarDisciplinas() {
+            const termo = document.getElementById('searchDisciplina')?.value.toLowerCase() || '';
+            document.querySelectorAll('#disciplinasList .disciplina-row').forEach(r => {
+                const grupoOk = filtroGrupoAtual === 'todas' || r.dataset.grupo === filtroGrupoAtual;
+                const nomeOk = !termo || r.dataset.nome.includes(termo);
+                r.style.display = (grupoOk && nomeOk) ? '' : 'none';
+            });
+        }
+        function fecharQualquerModal() { document.getElementById('modalDisciplina')?.remove(); document.querySelectorAll('.modal-overlay').forEach(m => m.remove()); }
+        function abrirDisciplina(discId) {
+            fecharQualquerModal();
+            const disc = editalData.disciplinas.find(d => d.id === discId);
+            if (!disc) return;
+            const p = getProgressoDisciplina(discId); const q = getQuestoesDisciplina(discId);
+            let topicosHtml = '';
+            disc.topicos.forEach((t, i) => {
+                const estado = appState.topicosConcluidos[`${discId}-${i}`] || 0;
+                const rev = appState.topicosRevisao[`${discId}-${i}`];
+                const nextReviewStr = rev?.nextReview ? new Date(rev.nextReview).toLocaleDateString('pt-BR') : (rev?.reviewCount >= INTERVALOS_REVISAO.length ? 'Consolidado' : '—');
+                const isPendente = rev?.nextReview && new Date(rev.nextReview) <= new Date();
+                const linkTopico = getLinkTopico(discId, i);
+                topicosHtml += `<div class="topico-item ${isPendente ? 'revisao-pendente' : ''}" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border);font-size:0.82rem;flex-wrap:wrap;"><span class="topico-nome" style="flex:1;min-width:200px;">${t} ${isPendente ? '<span class="badge badge-revisao">A revisar</span>' : ''}</span><span class="revisao-data" title="Próxima revisão">${nextReviewStr !== '—' ? 'Próx: ' + nextReviewStr : nextReviewStr}</span><div class="estado-btns" style="display:flex;gap:4px;"><button class="estado-btn ${estado===0?'estado-ativo-0':''}" onclick="event.stopPropagation();setEstadoTopico('${discId}',${i},0)" title="Não iniciado"><i class="fa-regular fa-circle"></i> Não iniciado</button><button class="estado-btn ${estado===1?'estado-ativo-1':''}" onclick="event.stopPropagation();setEstadoTopico('${discId}',${i},1)" title="Iniciado"><i class="fa-solid fa-spinner"></i> Iniciado</button><button class="estado-btn ${estado===2?'estado-ativo-2':''}" onclick="event.stopPropagation();setEstadoTopico('${discId}',${i},2)" title="Concluído"><i class="fa-solid fa-circle-check"></i> Concluído</button>${(estado === 1 || estado === 2) ? `<button class="btn btn-sm btn-revisar" onclick="event.stopPropagation();revisarTopico('${discId}',${i})" title="Registrar revisão"><i class="fa-solid fa-rotate-right"></i> Revisar</button>` : ''}</div><a href="${linkTopico}" target="_blank" class="btn-download-xs" onclick="event.stopPropagation();" title="Baixar Caderno"><i class="fa-solid fa-download"></i> Baixar Caderno</a></div>`;
+            });
+            const anotacao = (appState.anotacoes[discId] || '').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            const modal = document.createElement('div'); modal.className = 'modal-overlay'; modal.id = 'modalDisciplina'; modal.onclick = e => { if (e.target === modal) fecharModal(); };
+            modal.innerHTML = `<div class="modal" onclick="event.stopPropagation();"><button style="position:absolute;top:14px;right:18px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:#9CA3AF;" onclick="event.stopPropagation();fecharModal()"><i class="fa-solid fa-xmark"></i></button><h2>${getIcon(discId)} ${disc.nome}</h2><p><span class="badge ${editalData.grupos[disc.grupo].badgeClass}">${editalData.grupos[disc.grupo].nome}</span> <span class="badge badge-peso">Peso ${disc.peso}</span> Progresso: <strong>${p.pct}%</strong> · <span style="color:#059669;">${p.concluidos} concluídos</span> · <span style="color:#E2970D;">${p.iniciados} iniciados</span> · ${p.total} total</p><div style="display:flex;gap:12px;margin:16px 0;"><div><label>Resolvidas</label><input type="number" id="qtdResolvidas" value="${q.resolvidas||0}" min="0" style="width:70px;padding:8px;border:2px solid var(--border);border-radius:8px;" onchange="atualizarQuestoes('${discId}')"></div><div><label>Corretas</label><input type="number" id="qtdCorretas" value="${q.corretas||0}" min="0" style="width:70px;padding:8px;border:2px solid var(--border);border-radius:8px;" onchange="atualizarQuestoes('${discId}')"></div><div><strong>${q.resolvidas>0?Math.round((q.corretas/q.resolvidas)*100):0}%</strong></div></div><div style="margin-bottom:12px;"><label>Anotações</label><textarea id="anotacaoDisc" style="width:100%;min-height:60px;">${anotacao}</textarea><button class="btn btn-sm btn-outline" onclick="event.stopPropagation();salvarAnotacao('${discId}')">Salvar</button></div><h4>Tópicos do Edital (${p.concluidos} concluídos / ${p.iniciados} iniciados / ${p.total} total)</h4><div style="max-height:300px;overflow-y:auto;border:1px solid var(--border);border-radius:12px;">${topicosHtml}</div><div style="margin-top:12px;display:flex;gap:8px;"><button class="btn btn-sm btn-accent" onclick="event.stopPropagation();marcarTodos('${discId}',2)"><i class="fa-solid fa-circle-check"></i> Marcar Todos Concluídos</button><button class="btn btn-sm btn-outline" onclick="event.stopPropagation();marcarTodos('${discId}',1)" style="color:#E2970D;border-color:#E2970D;"><i class="fa-solid fa-spinner"></i> Marcar Todos Iniciados</button><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();marcarTodos('${discId}',0)">Resetar Todos</button></div></div>`;
+            document.getElementById('modalDisciplina')?.remove(); document.body.appendChild(modal);
+        }
+        function fecharModal() { document.getElementById('modalDisciplina')?.remove(); document.querySelectorAll('.modal-overlay').forEach(m => m.remove()); renderizarTab(currentTab); salvarState(); }
+        function setEstadoTopico(discId, i, estado) {
+            const estadoAnterior = appState.topicosConcluidos[`${discId}-${i}`] || 0;
+            const key = `${discId}-${i}`;
+            if (estado === 0) delete appState.topicosConcluidos[key];
+            else { appState.topicosConcluidos[key] = estado; registrarEstudoTopico(discId, i); }
+            invalidateProgressoCache(discId); registrarAtividadeHoje(); salvarState();
+            if (estado === 2 && estadoAnterior !== 2) dispararConfetesTopico();
+            verificarConquistas();
+            const modal = document.getElementById('modalDisciplina');
+            if (modal) {
+                const botoes = modal.querySelectorAll(`.topico-item`)[i]?.querySelectorAll('.estado-btn');
+                if (botoes) { botoes.forEach(btn => { btn.classList.remove('estado-ativo-0','estado-ativo-1','estado-ativo-2'); const match = btn.getAttribute('onclick').match(/setEstadoTopico\([^,]+,\d+,(\d)\)/); if (match && parseInt(match[1]) === estado) btn.classList.add(`estado-ativo-${estado}`); }); }
+                atualizarBotoesRevisaoModal(discId, i, estado);
+                const p = getProgressoDisciplina(discId);
+                const h4 = modal.querySelector('h4'); if (h4) h4.textContent = `Tópicos do Edital (${p.concluidos} concluídos / ${p.iniciados} iniciados / ${p.total} total)`;
+                const progressoTexto = modal.querySelector('p strong'); if (progressoTexto) progressoTexto.textContent = `${p.pct}%`;
+            }
+        }
+        function revisarTopico(discId, i) { registrarRevisaoTopico(discId, i); registrarAtividadeHoje(); verificarConquistas(); toast('<i class="fa-solid fa-rotate-right"></i> Revisão registrada! Próximo intervalo agendado.'); fecharModal(); abrirDisciplina(discId); }
+        function atualizarBotoesRevisaoModal(discId, i, estado) {
+            const modal = document.getElementById('modalDisciplina'); if (!modal) return;
+            const topicos = modal.querySelectorAll('.topico-item'); if (!topicos[i]) return;
+            const botoesContainer = topicos[i].querySelector('.estado-btns'); if (!botoesContainer) return;
+            const existente = botoesContainer.querySelector('.btn-revisar'); if (existente) existente.remove();
+            if (estado === 1 || estado === 2) { const btnRevisar = document.createElement('button'); btnRevisar.className = 'btn btn-sm btn-revisar'; btnRevisar.innerHTML = '<i class="fa-solid fa-rotate-right"></i> Revisar'; btnRevisar.onclick = (e) => { e.stopPropagation(); revisarTopico(discId, i); }; botoesContainer.appendChild(btnRevisar); }
+        }
+        function marcarTodos(discId, estado) {
+            const mensagens = { 0:'Tem certeza que deseja resetar todos os tópicos? Isso zerará o progresso desta disciplina.', 1:'Marcar todos como Iniciados?', 2:'Marcar todos como Concluídos?' };
+            if (estado === 0 && !confirm(mensagens[0])) return;
+            if (!confirm(mensagens[estado] || 'Confirmar?')) return;
+            const disc = editalData.disciplinas.find(d => d.id === discId); if (!disc) return;
+            let novosConcluidos = false;
+            disc.topicos.forEach((_, i) => { const key = `${discId}-${i}`; const estadoAnterior = appState.topicosConcluidos[key] || 0; if (estado === 0) delete appState.topicosConcluidos[key]; else { appState.topicosConcluidos[key] = estado; registrarEstudoTopico(discId, i); if (estado === 2 && estadoAnterior !== 2) novosConcluidos = true; } });
+            invalidateProgressoCache(discId); registrarAtividadeHoje(); salvarState();
+            if (novosConcluidos) dispararConfetesTopico();
+            verificarConquistas(); fecharModal(); toast(estado === 2 ? 'Todos marcados como concluídos!' : estado === 1 ? 'Todos marcados como iniciados!' : 'Todos resetados!');
+        }
+        function atualizarQuestoes(discId) { const r = parseInt(document.getElementById('qtdResolvidas')?.value) || 0; const c = Math.min(r, parseInt(document.getElementById('qtdCorretas')?.value) || 0); appState.questoes[discId] = { resolvidas: r, corretas: c }; registrarAtividadeHoje(); salvarState(); verificarConquistas(); if (verificarMetaDiaria()) { setTimeout(celebrarMetaDiaria, 500); } }
+        function salvarAnotacao(discId) { appState.anotacoes[discId] = document.getElementById('anotacaoDisc')?.value || ''; salvarState(); toast('Anotação salva!'); }
+
+        function renderQuestoes() {
+            const t = getTotalQuestoes();
+            let html = `<div class="card"><div class="card-header"><h3><i class="fa-solid fa-file-pen"></i> Controle de Questões</h3></div><p>Total: <strong>${t.total}</strong> · Corretas: <strong>${t.corretas}</strong> · <strong>${t.pct}%</strong> acerto</p><div class="progress-bar"><div class="progress-fill${t.pct<50?' low':t.pct<75?' mid':' high'}" style="width:${t.pct}%;"></div></div></div><div class="card"><div class="card-header"><h3>Por Disciplina</h3></div><div class="table-wrap"><table><thead><tr><th>Disciplina</th><th>Resolvidas</th><th>Corretas</th><th>%</th><th>Ações</th></tr></thead><tbody>`;
+            editalData.disciplinas.forEach(d => { const q = getQuestoesDisciplina(d.id); const p = q.resolvidas > 0 ? Math.round((q.corretas/q.resolvidas)*100) : 0; html += `<tr><td>${getIcon(d.id)} ${d.nome}</td><td>${q.resolvidas||0}</td><td>${q.corretas||0}</td><td><strong>${p}%</strong></td><td><button class="btn btn-sm btn-primary" onclick="abrirDisciplina('${d.id}')"><i class="fa-solid fa-gear"></i></button> <button class="btn btn-sm btn-outline" onclick="addQuestoes('${d.id}')">+10</button></td></tr>`; });
+            return html + `</tbody></table></div></div>`;
+        }
+        function addQuestoes(discId) { if (!appState.questoes[discId]) appState.questoes[discId] = { resolvidas:0, corretas:0 }; appState.questoes[discId].resolvidas += 10; appState.questoes[discId].corretas += 7; registrarAtividadeHoje(); salvarState(); verificarConquistas(); if (verificarMetaDiaria()) { setTimeout(celebrarMetaDiaria, 500); } renderizarTab('questoes'); toast('+10 questões!'); }
+        function renderRevisoes() {
+            const pendentes = getRevisoesPendentes();
+            if (pendentes.length === 0) return `<div class="card"><div class="card-header"><h3><i class="fa-solid fa-arrows-rotate"></i> Revisões do Dia</h3></div><p style="text-align:center;padding:40px;color:var(--text-secondary);"><i class="fa-solid fa-circle-check" style="font-size:2rem;color:#10B981;display:block;margin-bottom:12px;"></i> Nenhuma revisão pendente! 🎉</p></div>`;
+            let html = `<div class="card"><div class="card-header"><h3><i class="fa-solid fa-arrows-rotate"></i> Revisões Pendentes (${pendentes.length})</h3><button class="btn btn-outline btn-sm" onclick="navegar('disciplinas')"><i class="fa-solid fa-book-open"></i> Ir para Disciplinas</button></div><p style="margin-bottom:16px;">Tópicos que precisam ser revisados hoje segundo o sistema de repetição espaçada (1, 7, 30 dias).</p><div class="table-wrap"><table><thead><tr><th>Disciplina</th><th>Tópico</th><th>Data Prevista</th><th>Atraso</th><th>Ação</th></tr></thead><tbody>`;
+            pendentes.forEach(rev => { html += `<tr><td><span class="badge ${editalData.grupos[editalData.disciplinas.find(d=>d.id===rev.discId).grupo].badgeClass}">${rev.disciplinaNome}</span></td><td>${rev.topicoNome}</td><td>${rev.nextReview.toLocaleDateString('pt-BR')}</td><td><span style="color:#E91B00;font-weight:700;">${rev.atrasadoDias > 0 ? rev.atrasadoDias + ' dias' : 'Hoje'}</span></td><td><button class="btn btn-sm btn-revisar" onclick="revisarTopico('${rev.discId}',${rev.topicoIndex});navegar('revisoes');"><i class="fa-solid fa-rotate-right"></i> Revisar</button></td></tr>`; });
+            return html + `</tbody></table></div></div>`;
+        }
+        function renderPlanoDiario() {
+            const plano = gerarPlanoDiario(); const config = appState.planoDiarioConfig; const diaSemana = getDiaSemanaAtual(); const nomeDia = { 'dom':'Domingo','seg':'Segunda','ter':'Terça','qua':'Quarta','qui':'Quinta','sex':'Sexta','sab':'Sábado' };
+            let html = `<div class="card card-destaque"><div class="card-header"><h3><i class="fa-solid fa-calendar-check" style="color:#077ADC;"></i> Plano de Estudos — ${nomeDia[diaSemana]}</h3><div style="display:flex;gap:8px;"><button class="btn btn-outline btn-sm" onclick="abrirConfigPlano()"><i class="fa-solid fa-gear"></i> Configurar</button></div></div><p style="font-size:0.85rem; margin-bottom:16px;">Modo: <strong>${config.modo === 'auto' ? 'Automático (prioridade por peso e progresso)' : 'Ciclo Semanal'}</strong> · Tópicos por dia: <strong>${config.topicosPorDia}</strong> · Revisões inclusas: <strong>${config.incluirRevisoes ? 'Sim' : 'Não'}</strong></p>${plano.novosTopicos.length === 0 && plano.revisoes.length === 0 ? '<p style="text-align:center;padding:20px;color:var(--text-secondary);">🎉 Nenhum item pendente para hoje! Você está em dia.</p>' : ''}${plano.novosTopicos.length > 0 ? `<h4 style="margin-bottom:8px; color:var(--primary);">📘 Novos Tópicos (${plano.novosTopicos.length})</h4>` : ''}${plano.novosTopicos.map(t => `<div class="plano-item" id="plano-${t.discId}-${t.topicoIndex}"><div class="check-btn" onclick="marcarTopicoPlano('${t.discId}',${t.topicoIndex})" title="Marcar como estudado"><i class="fa-solid fa-check" style="font-size:0.7rem;"></i></div><div class="plano-info"><div class="plano-disciplina">${getIcon(t.discId)} ${t.disciplinaNome} <span class="badge ${editalData.grupos[t.grupo].badgeClass}">${editalData.grupos[t.grupo].nome}</span></div><div class="plano-topico">${t.topicoNome} ${t.estado === 1 ? '<span style="color:#E2970D;">(já iniciado)</span>' : ''}</div></div><button class="btn btn-sm btn-primary" onclick="abrirDisciplina('${t.discId}');">Estudar</button></div>`).join('')}${plano.revisoes.length > 0 ? `<h4 style="margin:16px 0 8px; color:#E91B00;">🔄 Revisões Pendentes (${plano.revisoes.length})</h4>` : ''}${plano.revisoes.map(r => `<div class="plano-item revisao-pendente" id="revisao-${r.discId}-${r.topicoIndex}"><div class="check-btn" onclick="revisarTopicoPlano('${r.discId}',${r.topicoIndex})" title="Registrar revisão"><i class="fa-solid fa-check" style="font-size:0.7rem;"></i></div><div class="plano-info"><div class="plano-disciplina">${getIcon(r.discId)} ${r.disciplinaNome} <span class="badge badge-revisao">A revisar</span></div><div class="plano-topico">${r.topicoNome} · Atrasado: ${r.atrasadoDias}d</div></div><button class="btn btn-sm btn-revisar" onclick="revisarTopicoPlano('${r.discId}',${r.topicoIndex});">Revisar</button></div>`).join('')}</div>`;
+            return html;
+        }
+        function marcarTopicoPlano(discId, index) { const estadoAtual = appState.topicosConcluidos[`${discId}-${index}`] || 0; if (estadoAtual === 0) setEstadoTopico(discId, index, 1); else if (estadoAtual === 1) setEstadoTopico(discId, index, 2); toast('Tópico atualizado!'); verificarPlanoCompleto(); renderizarTab('plano'); }
+        function revisarTopicoPlano(discId, index) { revisarTopico(discId, index); verificarPlanoCompleto(); renderizarTab('plano'); }
+        function abrirConfigPlano() {
+            fecharQualquerModal(); const config = appState.planoDiarioConfig;
+            let cicloHtml = ''; DIAS_SEMANA.forEach(dia => { cicloHtml += `<div class="ciclo-dia"><h4>${dia}</h4>`; editalData.disciplinas.forEach(d => { const checked = (config.ciclo[dia] || []).includes(d.id) ? 'checked' : ''; cicloHtml += `<label><input type="checkbox" value="${d.id}" data-dia="${dia}" ${checked}> ${d.nome.substring(0,20)}</label>`; }); cicloHtml += `</div>`; });
+            const modal = document.createElement('div'); modal.className = 'modal-overlay'; modal.onclick = e => { if (e.target === modal) modal.remove(); }; modal.innerHTML = `<div class="modal" onclick="event.stopPropagation();" style="max-width:900px;"><button style="position:absolute;top:14px;right:18px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:#9CA3AF;" onclick="this.closest('.modal-overlay').remove()"><i class="fa-solid fa-xmark"></i></button><h2><i class="fa-solid fa-gear"></i> Configurar Plano Diário</h2><div style="margin:16px 0;"><label style="font-weight:600;display:block;margin-bottom:6px;">Modo:</label><select id="configModo" style="padding:8px;border-radius:8px;border:2px solid var(--border);"><option value="auto" ${config.modo==='auto'?'selected':''}>Automático (prioridade inteligente)</option><option value="ciclo" ${config.modo==='ciclo'?'selected':''}>Ciclo Semanal (dias fixos)</option></select></div><div style="margin:16px 0;"><label style="font-weight:600;display:block;margin-bottom:6px;">Tópicos por dia:</label><input type="number" id="configTopicosPorDia" value="${config.topicosPorDia}" min="1" max="10" style="width:80px;padding:8px;border-radius:8px;border:2px solid var(--border);"></div><div style="margin:16px 0;"><label style="font-weight:600;display:flex;align-items:center;gap:8px;"><input type="checkbox" id="configIncluirRevisoes" ${config.incluirRevisoes?'checked':''}> Incluir revisões pendentes no plano</label></div><div id="cicloConfigContainer" style="${config.modo==='ciclo'?'':'display:none;'}"><h4>Ciclo Semanal</h4><p style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:12px;">Selecione quais disciplinas estudar em cada dia. Dias sem seleção usarão o modo automático.</p><div class="ciclo-config">${cicloHtml}</div></div><button class="btn btn-accent" onclick="salvarConfigPlano()">💾 Salvar Configuração</button></div>`;
+            document.body.appendChild(modal);
+            document.getElementById('configModo').addEventListener('change', function() { document.getElementById('cicloConfigContainer').style.display = this.value === 'ciclo' ? 'block' : 'none'; });
+        }
+        function salvarConfigPlano() { const config = appState.planoDiarioConfig; config.modo = document.getElementById('configModo').value; config.topicosPorDia = parseInt(document.getElementById('configTopicosPorDia').value) || 3; config.incluirRevisoes = document.getElementById('configIncluirRevisoes').checked; if (config.modo === 'ciclo') { DIAS_SEMANA.forEach(dia => { config.ciclo[dia] = []; document.querySelectorAll(`input[data-dia="${dia}"]:checked`).forEach(cb => config.ciclo[dia].push(cb.value)); }); } salvarState(); document.querySelector('.modal-overlay')?.remove(); toast('Configuração do plano salva!'); renderizarTab('plano'); }
+        function renderConquistas() { const desbloqueadas = Object.keys(appState.conquistasDesbloqueadas); let html = `<div class="card" style="border:2px solid #E2970D; background: linear-gradient(135deg, #FFFFFF 0%, #FEF9E7 100%);"><div class="card-header"><h3><i class="fa-solid fa-trophy" style="color:#E2970D;"></i> Conquistas (${desbloqueadas.length}/${CONQUISTAS.length})</h3></div><div class="progress-bar" style="margin-bottom:16px;"><div class="progress-fill high" style="width:${Math.round(desbloqueadas.length/CONQUISTAS.length*100)}%;"></div></div><div>`; CONQUISTAS.forEach(c => { const desbloqueada = appState.conquistasDesbloqueadas[c.id]; const data = desbloqueada ? new Date(desbloqueada).toLocaleDateString('pt-BR') : ''; html += `<div class="conquista-card ${desbloqueada ? 'desbloqueada' : 'bloqueada'}"><div class="conquista-icone ${desbloqueada ? 'desbloqueada' : 'bloqueada'}"><i class="${c.icone}"></i></div><div style="flex:1;"><div style="font-weight:600;font-size:0.9rem;">${c.nome} ${desbloqueada ? '✅' : '🔒'}</div><div style="font-size:0.75rem;color:var(--text-secondary);">${c.descricao}</div></div>${desbloqueada ? `<div style="font-size:0.7rem;color:var(--text-secondary);">${data}</div>` : ''}</div>`; }); return html + `</div></div>`; }
+        function renderMetas() { const dias = Math.max(1, Math.floor((new Date() - new Date(appState.dataInicio)) / (1000*60*60*24))); const totalQ = getTotalQuestoes(); const metaAc = appState.metaQuestoesDiaria * dias; const pctMeta = Math.min(100, Math.round((totalQ.total / metaAc)*100)); return `<div class="card"><div class="card-header"><h3><i class="fa-solid fa-bullseye"></i> Metas Gerais</h3></div><div style="display:flex;gap:12px;margin:8px 0;"><label style="font-weight:600;">Questões/dia:</label><input type="number" id="metaQDiaria" value="${appState.metaQuestoesDiaria}" style="width:80px;padding:8px;border:2px solid var(--border);border-radius:8px;"></div><div style="display:flex;gap:12px;margin:8px 0;"><label style="font-weight:600;">Horas/dia:</label><input type="number" id="metaHDiaria" value="${appState.metaHorasDiaria}" step="0.5" style="width:80px;padding:8px;border:2px solid var(--border);border-radius:8px;"></div><div style="display:flex;gap:12px;margin:8px 0;"><label style="font-weight:600;">Revisões/semana:</label><input type="number" id="metaRevSemana" value="${appState.metaRevisoesSemana}" style="width:80px;padding:8px;border:2px solid var(--border);border-radius:8px;"></div><div style="display:flex;gap:12px;margin:8px 0;"><label style="font-weight:600;">Data início:</label><input type="date" id="dataInicio" value="${appState.dataInicio}" style="padding:8px;border:2px solid var(--border);border-radius:8px;"></div><button class="btn btn-accent" onclick="salvarMetasGerais()">Salvar</button></div><div class="card"><div class="card-header"><h3>Acompanhamento</h3></div><p>${dias} dias · Meta: <strong>${metaAc}</strong> · Realizado: <strong>${totalQ.total}</strong> (${pctMeta}%)</p><div class="progress-bar"><div class="progress-fill${pctMeta<50?' low':pctMeta<80?' mid':' high'}" style="width:${pctMeta}%;"></div></div></div><div class="card"><div class="card-header"><h3>Metas por Disciplina</h3></div><div class="table-wrap"><table><thead><tr><th>Disciplina</th><th>Meta</th><th>Realizado</th></tr></thead><tbody>${editalData.disciplinas.map(d=>{const m=appState.metasPorDisciplina[d.id]?.questoes||0;const r=(appState.questoes[d.id]?.resolvidas)||0;return`<tr><td>${getIcon(d.id)} ${d.nome}</td><td><input type="number" value="${m}" style="width:80px;" onchange="atualizarMetaDisciplina('${d.id}','questoes',this.value)"></td><td>${r}</td></tr>`;}).join('')}</tbody></table></div></div><div class="card" style="border:2px solid #077ADC;"><div class="card-header"><h3><i class="fa-solid fa-database" style="color:#077ADC;"></i> Backup & Exportação</h3></div><p style="font-size:0.85rem;margin-bottom:16px;">Exporte seus dados para segurança ou baixe uma planilha completa.</p><div style="display:flex;gap:12px;flex-wrap:wrap;"><button class="btn btn-primary" onclick="exportarBackup()"><i class="fa-solid fa-download"></i> Exportar Backup</button><button class="btn btn-accent" onclick="importarBackup()"><i class="fa-solid fa-upload"></i> Restaurar Backup</button><button class="btn btn-export" onclick="exportarPlanilhaExcel()"><i class="fa-solid fa-file-excel"></i> 📥 Exportar Planilha</button></div></div>`; }
+        function salvarMetasGerais() { appState.metaQuestoesDiaria = parseInt(document.getElementById('metaQDiaria')?.value) || 50; appState.metaHorasDiaria = parseFloat(document.getElementById('metaHDiaria')?.value) || 5; appState.metaRevisoesSemana = parseInt(document.getElementById('metaRevSemana')?.value) || 4; appState.dataInicio = document.getElementById('dataInicio')?.value || appState.dataInicio; salvarState(); toast('Metas salvas!'); renderizarTab('metas'); }
+        function atualizarMetaDisciplina(discId, tipo, val) { if (!appState.metasPorDisciplina[discId]) appState.metasPorDisciplina[discId] = { questoes:0, horas:0 }; appState.metasPorDisciplina[discId][tipo] = parseInt(val) || 0; salvarState(); }
+        function renderEstatisticas() {
+            const geral = getProgressoGeral(); const questoes = getTotalQuestoes(); const dias = Math.max(1, Math.floor((new Date() - new Date(appState.dataInicio)) / (1000*60*60*24)));
+            let notaEstimada = 0, notaMaxima = 0; editalData.disciplinas.forEach(d => { const qtd = dadosProvaUFPB.distribuição[d.id] || 0; const prog = getProgressoDisciplina(d.id).pct/100; const peso = dadosProvaUFPB.pesoMedioPorDisciplina[d.id] || 1; notaEstimada += qtd * prog * (peso/2); notaMaxima += qtd * (peso/2); }); const notaProjetada = Math.round((notaMaxima>0?Math.round((notaEstimada/notaMaxima)*100):0)/100 * dadosProvaUFPB.totalQuestoes);
+            const criticas = editalData.disciplinas.map(d => ({ id:d.id, nome:d.nome, questoesProva: dadosProvaUFPB.distribuição[d.id]||0, progresso: getProgressoDisciplina(d.id).pct, gap: ((dadosProvaUFPB.distribuição[d.id]||0)*(100-getProgressoDisciplina(d.id).pct)/100) })).sort((a,b) => b.gap - a.gap); const topCriticas = criticas.slice(0,5);
+            return `<div class="kpi-grid"><div class="kpi-card"><div class="kpi-icon purple"><i class="fa-solid fa-chart-pie"></i></div><div class="kpi-info"><div class="kpi-value">${geral.pct}%</div><div class="kpi-label">Progresso</div></div></div><div class="kpi-card"><div class="kpi-icon green"><i class="fa-solid fa-calendar"></i></div><div class="kpi-info"><div class="kpi-value">${dias}</div><div class="kpi-label">Dias</div></div></div><div class="kpi-card"><div class="kpi-icon amber"><i class="fa-solid fa-file-pen"></i></div><div class="kpi-info"><div class="kpi-value">${questoes.total}</div><div class="kpi-label">Questões</div></div></div><div class="kpi-card"><div class="kpi-icon blue"><i class="fa-solid fa-gauge-high"></i></div><div class="kpi-info"><div class="kpi-value">${(questoes.total/dias).toFixed(1)}</div><div class="kpi-label">Média/dia</div></div></div></div><div class="card" style="border:2px solid #077ADC;"><div class="card-header"><h3>Coaching Estratégico</h3></div><div class="insight-box"><strong>Nota Projetada:</strong> <span style="font-size:1.4rem;font-weight:800;color:#077ADC;">~${notaProjetada} pts</span> de ${dadosProvaUFPB.totalQuestoes} | Corte estimado: ${dadosProvaUFPB.notaCorteEstimada} pts</div></div><div class="charts-row"><div class="card"><div class="card-header"><h3>Distribuição na Prova</h3></div><div class="chart-container"><canvas id="chartDistribuicaoProva"></canvas></div></div><div class="card"><div class="card-header"><h3>Progresso vs Importância</h3></div><div class="chart-container"><canvas id="chartImportanciaProgresso"></canvas></div></div></div><div class="card"><div class="card-header"><h3>Radar de Desempenho</h3></div><div class="chart-container" style="max-height:400px;"><canvas id="chartRadarDesempenho"></canvas></div></div><div class="card"><div class="card-header"><h3>Top 5 Críticas</h3></div><div class="table-wrap"><table><thead><tr><th>Disciplina</th><th>Qtd</th><th>Prog</th><th>Gap</th></tr></thead><tbody>${topCriticas.map(d=>`<tr><td>${getIcon(d.id)} ${d.nome}</td><td>${d.questoesProva}</td><td>${d.progresso}%</td><td>${Math.round(d.gap)} pts</td></tr>`).join('')}</tbody></table></div></div>`;
+        }
+
+        // ==================== EXPORTAÇÃO EXCEL (COMPLETA) ====================
+        const COR_CABECALHO = '077ADC'; const COR_TEXTO_CABECALHO = 'FFFFFF'; const COR_ZEBRA_1 = 'F8FAFC'; const COR_ZEBRA_2 = 'FFFFFF'; const COR_BORDA = 'E2E8F0'; const FONTE_PADRAO = 'Calibri';
+        function criarEstiloCelula(negrito, corFundo, corFonte, tamanhoFonte, alinhamento) { return { font: { bold: negrito || false, color: corFonte ? { rgb: corFonte } : undefined, sz: tamanhoFonte || 11, name: FONTE_PADRAO }, fill: corFundo ? { fgColor: { rgb: corFundo } } : undefined, alignment: alinhamento || { vertical: 'center', wrapText: true }, border: { top: { style: 'thin', color: { rgb: COR_BORDA } }, bottom: { style: 'thin', color: { rgb: COR_BORDA } }, left: { style: 'thin', color: { rgb: COR_BORDA } }, right: { style: 'thin', color: { rgb: COR_BORDA } } } }; }
+        function aplicarEstiloCabecalho(ws, range) { const estilo = criarEstiloCelula(true, COR_CABECALHO, COR_TEXTO_CABECALHO, 12, { horizontal: 'center', vertical: 'center', wrapText: true }); const decoded = XLSX.utils.decode_range(range); for (let R = decoded.s.r; R <= decoded.e.r; R++) for (let C = decoded.s.c; C <= decoded.e.c; C++) { const cellRef = XLSX.utils.encode_cell({ r: R, c: C }); if (ws[cellRef]) ws[cellRef].s = estilo; } }
+        function aplicarEstiloZebra(ws, range, inicioDados) { const decoded = XLSX.utils.decode_range(range); for (let R = inicioDados; R <= decoded.e.r; R++) { const zebra = (R - inicioDados) % 2 === 0 ? COR_ZEBRA_1 : COR_ZEBRA_2; const estilo = criarEstiloCelula(false, zebra, '102A43', 10, { vertical: 'center', wrapText: true }); for (let C = decoded.s.c; C <= decoded.e.c; C++) { const cellRef = XLSX.utils.encode_cell({ r: R, c: C }); if (ws[cellRef]) ws[cellRef].s = estilo; } } }
+        function autoAjustarColunas(ws, dados, numColunas) { const larguras = []; for (let i = 0; i < numColunas; i++) { let maxLen = 10; dados.forEach(linha => { const val = linha[i] !== undefined ? String(linha[i]) : ''; maxLen = Math.max(maxLen, val.length); }); larguras.push({ wch: Math.min(maxLen + 4, 50) }); } ws['!cols'] = larguras; }
+        function exportarPlanilhaExcel() { toast('<i class="fa-solid fa-spinner fa-spin"></i> Gerando planilha...'); setTimeout(() => { try { const wb = XLSX.utils.book_new(); criarAbaDashboard(wb); criarAbaDisciplinas(wb); criarAbaTopicos(wb); criarAbaRevisoes(wb); criarAbaPlanoDiario(wb); criarAbaConquistas(wb); criarAbaMetas(wb); criarAbaEstatisticas(wb); const dataAtual = new Date().toISOString().split('T')[0]; XLSX.writeFile(wb, `gestor-estudos-ufpb-2026-${dataAtual}.xlsx`); toast('<i class="fa-solid fa-circle-check"></i> ✅ Planilha exportada com sucesso!'); } catch (e) { toast('<i class="fa-solid fa-circle-exclamation"></i> Erro ao exportar planilha.'); console.error(e); } }, 300); }
+        function criarAbaDashboard(wb) { const geral = getProgressoGeral(); const questoes = getTotalQuestoes(); const streak = getStreak(); const revisoesPendentes = getTotalRevisoesPendentes(); const plano = gerarPlanoDiario(); const dataExportacao = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); const dados = [['GESTOR DE ESTUDOS — UFPB 2026'],['Assistente em Administração'],[''],['Indicador','Valor'],['Progresso Total do Edital',`${geral.pct}%`],['Total de Disciplinas',editalData.disciplinas.length],['Tópicos Concluídos',geral.concluidos],['Tópicos Iniciados',geral.iniciados],['Total de Tópicos',geral.total],['Questões Resolvidas',questoes.total],['Questões Corretas',questoes.corretas],['Taxa de Acerto',`${questoes.pct}%`],['Sequência de Dias (Streak)',`${streak} dias`],['Revisões Pendentes',revisoesPendentes],['Tópicos no Plano Hoje',plano.novosTopicos.length],['Conquistas Desbloqueadas',Object.keys(appState.conquistasDesbloqueadas).length],['Data da Exportação',dataExportacao]]; const ws = XLSX.utils.aoa_to_sheet(dados); ws['!merges'] = [{ s: { r:0, c:0 }, e: { r:0, c:1 } }, { s: { r:1, c:0 }, e: { r:1, c:1 } }]; aplicarEstiloCabecalho(ws, XLSX.utils.encode_range({ s:{r:3,c:0}, e:{r:3,c:1} })); aplicarEstiloZebra(ws, XLSX.utils.encode_range({ s:{r:4,c:0}, e:{r:16,c:1} }), 4); autoAjustarColunas(ws, dados, 2); ws['!freeze'] = { xSplit:0, ySplit:4, topLeftCell:'A5' }; XLSX.utils.book_append_sheet(wb, ws, 'Dashboard Geral'); }
+        function criarAbaDisciplinas(wb) { const dados = [['Disciplina','Grupo','Progresso (%)','Tópicos Concluídos','Total de Tópicos','Questões Resolvidas']]; editalData.disciplinas.forEach(d => { const p = getProgressoDisciplina(d.id); const q = getQuestoesDisciplina(d.id); const grupoNome = editalData.grupos[d.grupo] ? editalData.grupos[d.grupo].nome : d.grupo; dados.push([d.nome, grupoNome, p.pct, p.concluidos, p.total, q.resolvidas||0]); }); const ws = XLSX.utils.aoa_to_sheet(dados); aplicarEstiloCabecalho(ws, XLSX.utils.encode_range({ s:{r:0,c:0}, e:{r:0,c:5} })); aplicarEstiloZebra(ws, XLSX.utils.encode_range({ s:{r:1,c:0}, e:{r:dados.length-1,c:5} }), 1); autoAjustarColunas(ws, dados, 6); ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s:{r:0,c:0}, e:{r:dados.length-1,c:5} }) }; ws['!freeze'] = { xSplit:0, ySplit:1, topLeftCell:'A2' }; XLSX.utils.book_append_sheet(wb, ws, 'Disciplinas'); }
+        function criarAbaTopicos(wb) { const dados = [['Disciplina','Tópico','Status','Concluído','Anotações','Questões Resolvidas','Próxima Revisão']]; const statusLabels = ['Não iniciado','Iniciado','Concluído']; editalData.disciplinas.forEach(d => { d.topicos.forEach((t,i) => { const estado = appState.topicosConcluidos[`${d.id}-${i}`] || 0; const anotacao = appState.anotacoes[`${d.id}-${i}`] || ''; const rev = appState.topicosRevisao[`${d.id}-${i}`]; const proximaRevisao = rev?.nextReview ? new Date(rev.nextReview).toLocaleDateString('pt-BR') : (rev?.reviewCount >= INTERVALOS_REVISAO.length ? 'Consolidado' : '—'); dados.push([d.nome, t, statusLabels[estado]||'Não iniciado', estado===2?'Sim':'Não', anotacao, '', proximaRevisao]); }); }); const ws = XLSX.utils.aoa_to_sheet(dados); aplicarEstiloCabecalho(ws, XLSX.utils.encode_range({ s:{r:0,c:0}, e:{r:0,c:6} })); aplicarEstiloZebra(ws, XLSX.utils.encode_range({ s:{r:1,c:0}, e:{r:dados.length-1,c:6} }), 1); autoAjustarColunas(ws, dados, 7); ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s:{r:0,c:0}, e:{r:dados.length-1,c:6} }) }; ws['!freeze'] = { xSplit:0, ySplit:1, topLeftCell:'A2' }; XLSX.utils.book_append_sheet(wb, ws, 'Tópicos de Estudo'); }
+        function criarAbaRevisoes(wb) { const pendentes = getRevisoesPendentes(); const dados = [['Disciplina','Tópico','Data Prevista','Atrasado (dias)']]; pendentes.forEach(rev => { dados.push([rev.disciplinaNome, rev.topicoNome, rev.nextReview.toLocaleDateString('pt-BR'), rev.atrasadoDias]); }); if (pendentes.length === 0) dados.push(['Nenhuma revisão pendente','','','']); const ws = XLSX.utils.aoa_to_sheet(dados); aplicarEstiloCabecalho(ws, XLSX.utils.encode_range({ s:{r:0,c:0}, e:{r:0,c:3} })); if (pendentes.length > 0) aplicarEstiloZebra(ws, XLSX.utils.encode_range({ s:{r:1,c:0}, e:{r:pendentes.length,c:3} }), 1); autoAjustarColunas(ws, dados, 4); ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s:{r:0,c:0}, e:{r:Math.max(1,pendentes.length),c:3} }) }; ws['!freeze'] = { xSplit:0, ySplit:1, topLeftCell:'A2' }; XLSX.utils.book_append_sheet(wb, ws, 'Revisões Pendentes'); }
+        function criarAbaPlanoDiario(wb) { const plano = gerarPlanoDiario(); const dados = [['Tipo','Disciplina','Tópico','Status']]; plano.novosTopicos.forEach(t => dados.push(['Novo', t.disciplinaNome, t.topicoNome, 'Pendente'])); plano.revisoes.forEach(r => dados.push(['Revisão', r.disciplinaNome, r.topicoNome, `Atrasado ${r.atrasadoDias}d`])); if (dados.length === 1) dados.push(['Nenhum item no plano de hoje','','','']); const ws = XLSX.utils.aoa_to_sheet(dados); aplicarEstiloCabecalho(ws, XLSX.utils.encode_range({ s:{r:0,c:0}, e:{r:0,c:3} })); if (dados.length > 2) aplicarEstiloZebra(ws, XLSX.utils.encode_range({ s:{r:1,c:0}, e:{r:dados.length-1,c:3} }), 1); autoAjustarColunas(ws, dados, 4); ws['!freeze'] = { xSplit:0, ySplit:1, topLeftCell:'A2' }; XLSX.utils.book_append_sheet(wb, ws, 'Plano Diário'); }
+        function criarAbaConquistas(wb) { const dados = [['Conquista','Descrição','Status','Data']]; CONQUISTAS.forEach(c => { const desbloqueada = appState.conquistasDesbloqueadas[c.id]; dados.push([c.nome, c.descricao, desbloqueada ? 'Desbloqueada' : 'Bloqueada', desbloqueada ? new Date(desbloqueada).toLocaleDateString('pt-BR') : '—']); }); const ws = XLSX.utils.aoa_to_sheet(dados); aplicarEstiloCabecalho(ws, XLSX.utils.encode_range({ s:{r:0,c:0}, e:{r:0,c:3} })); if (dados.length > 1) aplicarEstiloZebra(ws, XLSX.utils.encode_range({ s:{r:1,c:0}, e:{r:dados.length-1,c:3} }), 1); autoAjustarColunas(ws, dados, 4); ws['!freeze'] = { xSplit:0, ySplit:1, topLeftCell:'A2' }; XLSX.utils.book_append_sheet(wb, ws, 'Conquistas'); }
+        function criarAbaMetas(wb) { const dias = Math.max(1, Math.floor((new Date() - new Date(appState.dataInicio)) / (1000*60*60*24))); const totalQ = getTotalQuestoes(); const metaQuestoesTotal = appState.metaQuestoesDiaria * dias; const pctMetaQuestoes = Math.min(100, Math.round((totalQ.total / metaQuestoesTotal)*100)); const dados = [['META','VALOR','REALIZADO','PERCENTUAL'],['Meta Diária de Questões',appState.metaQuestoesDiaria, Math.round(totalQ.total/dias), `${pctMetaQuestoes}%`],['Meta Diária de Horas',`${appState.metaHorasDiaria}h`,'—','—'],['Meta Semanal de Revisões',appState.metaRevisoesSemana,'—','—'],['Total de Questões (Meta Acumulada)',metaQuestoesTotal, totalQ.total, `${pctMetaQuestoes}%`],['Dias de Estudo',dias,'—','—'],[''],['DISCIPLINA','META DE QUESTÕES','REALIZADO','PERCENTUAL']]; editalData.disciplinas.forEach(d => { const meta = appState.metasPorDisciplina[d.id]?.questoes || 0; const realizado = (appState.questoes[d.id]?.resolvidas) || 0; const pct = meta > 0 ? Math.round((realizado/meta)*100) : 0; dados.push([d.nome, meta, realizado, `${pct}%`]); }); const ws = XLSX.utils.aoa_to_sheet(dados); aplicarEstiloCabecalho(ws, XLSX.utils.encode_range({ s:{r:0,c:0}, e:{r:0,c:3} })); aplicarEstiloCabecalho(ws, XLSX.utils.encode_range({ s:{r:7,c:0}, e:{r:7,c:3} })); aplicarEstiloZebra(ws, XLSX.utils.encode_range({ s:{r:1,c:0}, e:{r:5,c:3} }), 1); aplicarEstiloZebra(ws, XLSX.utils.encode_range({ s:{r:8,c:0}, e:{r:dados.length-1,c:3} }), 8); autoAjustarColunas(ws, dados, 4); ws['!freeze'] = { xSplit:0, ySplit:1, topLeftCell:'A2' }; XLSX.utils.book_append_sheet(wb, ws, 'Metas'); }
+        function criarAbaEstatisticas(wb) { const geral = getProgressoGeral(); const questoes = getTotalQuestoes(); const dias = Math.max(1, Math.floor((new Date() - new Date(appState.dataInicio)) / (1000*60*60*24))); const dados = [['ESTATÍSTICAS GERAIS',''],['Progresso Total',`${geral.pct}%`],['Questões Resolvidas',questoes.total],['Taxa de Acerto',`${questoes.pct}%`],['Média de Questões/Dia',(questoes.total/dias).toFixed(1)],['Streak Atual',`${getStreak()} dias`],['Revisões Pendentes',getTotalRevisoesPendentes()],['Conquistas Desbloqueadas',Object.keys(appState.conquistasDesbloqueadas).length],[''],['RANKING DE PROGRESSO POR DISCIPLINA',''],['Disciplina','Progresso (%)']]; const ranking = editalData.disciplinas.map(d=>({ nome: d.nome, pct: getProgressoDisciplina(d.id).pct })).sort((a,b) => b.pct - a.pct); ranking.forEach((d,i) => dados.push([`${i+1}º — ${d.nome}`,`${d.pct}%`])); dados.push([''],['DISCIPLINAS COM MENOR PROGRESSO','']); const piores = [...ranking].sort((a,b) => a.pct - b.pct).slice(0,3); piores.forEach(d => dados.push([d.nome,`${d.pct}%`])); dados.push([''],['PROGRESSO POR GRUPO','']); Object.entries(editalData.grupos).forEach(([k,v]) => { const discs = editalData.disciplinas.filter(d => d.grupo===k); let totalG=0,concluidosG=0,iniciadosG=0; discs.forEach(d=>{ const p=getProgressoDisciplina(d.id); totalG+=p.total; concluidosG+=p.concluidos; iniciadosG+=p.iniciados; }); const pctG = totalG>0?Math.round(((concluidosG+iniciadosG*0.5)/totalG)*100):0; dados.push([v.nome,`${pctG}%`]); }); const ws = XLSX.utils.aoa_to_sheet(dados); aplicarEstiloCabecalho(ws, XLSX.utils.encode_range({ s:{r:0,c:0}, e:{r:0,c:1} })); aplicarEstiloCabecalho(ws, XLSX.utils.encode_range({ s:{r:8,c:0}, e:{r:8,c:1} })); aplicarEstiloZebra(ws, XLSX.utils.encode_range({ s:{r:1,c:0}, e:{r:7,c:1} }), 1); autoAjustarColunas(ws, dados, 2); ws['!freeze'] = { xSplit:0, ySplit:1, topLeftCell:'A2' }; XLSX.utils.book_append_sheet(wb, ws, 'Estatísticas'); }
+        // ==================== BUSCA GLOBAL E LOGIN ====================
+        function initGlobalSearch() {
+            const input = document.getElementById('globalSearch');
+            const dropdown = document.getElementById('searchDropdown');
+            if (!input || !dropdown) return;
+            input.addEventListener('input', () => {
+                const termo = input.value.toLowerCase().trim();
+                if (termo.length === 0) { dropdown.style.display = 'none'; return; }
+                const sugestoes = editalData.disciplinas.filter(d => d.nome.toLowerCase().includes(termo));
+                if (sugestoes.length === 0) { dropdown.style.display = 'none'; return; }
+                dropdown.innerHTML = sugestoes.map(d => `<div class="dropdown-item" data-id="${d.id}">${getIcon(d.id)} ${d.nome}</div>`).join('');
+                dropdown.style.display = 'block';
+                dropdown.querySelectorAll('.dropdown-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        const id = item.dataset.id;
+                        selecionarDisciplinaGlobal(id);
+                        dropdown.style.display = 'none';
+                        input.value = '';
+                    });
+                });
+            });
+            input.addEventListener('keydown', (e) => { if (e.key === 'Escape') dropdown.style.display = 'none'; });
+            document.addEventListener('click', (e) => { if (!e.target.closest('.global-search-wrap')) dropdown.style.display = 'none'; });
+        }
+        function selecionarDisciplinaGlobal(discId) {
+            if (currentTab === 'disciplinas') abrirDisciplina(discId);
+            else { navegar('disciplinas'); setTimeout(() => abrirDisciplina(discId), 300); }
+        }
+        function atualizarRelogio() { const el = document.getElementById('dateText'); if (el) el.textContent = new Date().toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' }); }
+        function atualizarDashboard() { const btn = document.getElementById('refreshBtn'); btn.classList.add('spin'); setTimeout(() => btn.classList.remove('spin'), 600); navegar(currentTab); toast('Dados atualizados!'); }
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('overlay').classList.toggle('hidden'); }
+        function fecharSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.add('hidden'); }
+        function toggleTheme() { const html = document.documentElement; if (html.hasAttribute('data-theme')) html.removeAttribute('data-theme'); else html.setAttribute('data-theme', 'dark'); const btn = document.getElementById('themeToggle'); if (btn) { const icon = btn.querySelector('i'); if (html.hasAttribute('data-theme')) icon.className = 'fa-solid fa-sun'; else icon.className = 'fa-solid fa-moon'; } }
+        function resetThemeToDefault() { document.documentElement.removeAttribute('data-theme'); }
+
+        // ==================== PERFIL DE FOTO ====================
+        function initProfilePicture() {
+            const profilePicWrapper = document.getElementById('profilePicWrapper');
+            const profilePicImg = document.getElementById('profilePicImg');
+            const profilePicIcon = document.getElementById('profilePicIcon');
+            const profilePicInput = document.getElementById('profilePicInput');
+            if (!profilePicWrapper || !profilePicImg || !profilePicIcon || !profilePicInput) return;
+            if (appState.profilePic) {
+                profilePicImg.src = appState.profilePic;
+                profilePicImg.style.display = 'block';
+                profilePicIcon.style.display = 'none';
+                profilePicWrapper.classList.add('has-image');
+            }
+            profilePicWrapper.addEventListener('click', () => profilePicInput.click());
+            profilePicInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                if (!file.type.startsWith('image/')) { toast('Formato de imagem não suportado.'); return; }
+                if (file.size > 200 * 1024) { toast('Imagem muito grande. Máximo 200 KB.'); return; }
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const dataUri = event.target.result;
+                    appState.profilePic = dataUri;
+                    salvarState();
+                    profilePicImg.src = dataUri;
+                    profilePicImg.style.display = 'block';
+                    profilePicIcon.style.display = 'none';
+                    profilePicWrapper.classList.add('has-image');
+                    toast('Foto de perfil atualizada!');
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // ==================== INICIALIZAÇÃO COM LOGIN ====================
+        function setupLoginForm() {
+            const form = document.getElementById('loginForm');
+            const errorDiv = document.getElementById('loginError');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const username = document.getElementById('loginUsername').value.trim();
+                const password = document.getElementById('loginPassword').value.trim();
+                if (username === 'Aluno vulp' && password === '456789') {
+                    sessionStorage.setItem('authenticated', 'true');
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('sidebar').style.display = 'flex';
+                    document.getElementById('mainContent').style.display = 'flex';
+                    init();
+                } else {
+                    errorDiv.classList.add('show');
+                    document.getElementById('loginPassword').value = '';
+                    document.getElementById('loginPassword').focus();
+                }
+            });
+        }
+
+        function init() {
+            if (sessionStorage.getItem('authenticated')) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('sidebar').style.display = 'flex';
+                document.getElementById('mainContent').style.display = 'flex';
+            } else {
+                setupLoginForm();
+                return;
+            }
+            resetThemeToDefault();
+            carregarState();
+            // Garantir que não há referência ao edital antigo
+            if (!appState.linksTopicos) appState.linksTopicos = {};
+            // Removida linha que adicionava link para 'raciocinio-0' (inexistente no novo edital)
+            salvarState();
+            atualizarRelogio();
+            setInterval(atualizarRelogio, 30000);
+            editalData.disciplinas.forEach(d => { if (!appState.questoes[d.id]) appState.questoes[d.id] = { resolvidas:0, corretas:0 }; if (!appState.metasPorDisciplina[d.id]) appState.metasPorDisciplina[d.id] = { questoes:0, horas:0 }; });
+            navegar('dashboard');
+            initGlobalSearch();
+            initProfilePicture();
+            setTimeout(verificarConquistas, 500);
+        }
+
+        function getIcon(id) { return `<i class="${disciplinaIconMap[id] || 'fa-solid fa-circle-question'}"></i>`; }
+
+        // Eventos globais
+        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') { fecharModal(); fecharSidebar(); } });
+        window.addEventListener('beforeunload', () => salvarState());
+
+        // Partículas da tela de login
+        (function initLoginParticles() {
+            const canvas = document.getElementById('loginParticlesCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let animationId;
+            function resize() { canvas.width = canvas.parentElement.offsetWidth; canvas.height = canvas.parentElement.offsetHeight; }
+            window.addEventListener('resize', resize);
+            resize();
+            for (let i = 0; i < 50; i++) { particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3, r: Math.random() * 2 + 1, opacity: Math.random() * 0.5 + 0.1 }); }
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.x += p.vx; p.y += p.vy;
+                    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(131,111,255,${p.opacity})`;
+                    ctx.fill();
+                });
+                animationId = requestAnimationFrame(draw);
+            }
+            draw();
+        })();
+    </script>
+</body>
+</html>        
