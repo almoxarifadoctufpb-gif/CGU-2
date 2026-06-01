@@ -12,7 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
     <style>
-        /* ========== ESTILOS COMPLETOS (mantidos exatamente como na versão final aprovada) ========== */
+        /* ========== ESTILOS COMPLETOS (com sidebar atualizada) ========== */
         :root {
             --primary: #836FFF;
             --primary-hover: #6B4FDF;
@@ -53,7 +53,7 @@
             --footer-border: rgba(255,255,255,0.1);
             --footer-accent: #15F5BA;
         }
-        [data-theme="dark"] { /* mantido original */ --bg: #0F172A; --surface: #1E293B; --surface-alt: #1E293B; --text-primary: #F1F5F9; --text-secondary: #CBD5E1; --muted: #94A3B8; --border: #334155; --zebra-odd: #1E293B; --zebra-even: #263348; --primary-soft: rgba(131, 111, 255, 0.15); --gold-soft: rgba(21, 245, 186, 0.15); --red-soft: rgba(233, 27, 0, 0.15); --success-soft: rgba(16, 185, 129, 0.15); --warning-soft: rgba(131, 111, 255, 0.15); --danger-soft: rgba(233, 27, 0, 0.15); --shadow: 0 4px 16px rgba(0,0,0,0.3); --shadow-lg: 0 8px 30px rgba(0,0,0,0.4); --footer-bg: #0A2540; --footer-text: #CBD5E1; --footer-heading: #FFFFFF; --footer-border: rgba(255,255,255,0.1); }
+        [data-theme="dark"] { --bg: #0F172A; --surface: #1E293B; --surface-alt: #1E293B; --text-primary: #F1F5F9; --text-secondary: #CBD5E1; --muted: #94A3B8; --border: #334155; --zebra-odd: #1E293B; --zebra-even: #263348; --primary-soft: rgba(131, 111, 255, 0.15); --gold-soft: rgba(21, 245, 186, 0.15); --red-soft: rgba(233, 27, 0, 0.15); --success-soft: rgba(16, 185, 129, 0.15); --warning-soft: rgba(131, 111, 255, 0.15); --danger-soft: rgba(233, 27, 0, 0.15); --shadow: 0 4px 16px rgba(0,0,0,0.3); --shadow-lg: 0 8px 30px rgba(0,0,0,0.4); --footer-bg: #0A2540; --footer-text: #CBD5E1; --footer-heading: #FFFFFF; --footer-border: rgba(255,255,255,0.1); }
         [data-theme="dark"] .topbar { background: linear-gradient(135deg, #0A2540 0%, #0B3A6B 55%, #1E5090 100%); }
         [data-theme="dark"] .sidebar { background: linear-gradient(180deg, #0A2540 0%, #0B3A6B 55%, #1E5090 100%); }
         [data-theme="dark"] .hero { background: linear-gradient(135deg, #0A2540 0%, #0B3A6B 55%, #1E5090 100%) !important; }
@@ -122,8 +122,8 @@
         .sidebar-header { padding: 18px 16px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.15); text-align: center; }
         .sidebar-logo { display: block; max-width: 160px; width: 100%; margin: 0 auto 14px; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2)); transition: transform 0.3s; }
         .sidebar-logo:hover { transform: scale(1.03); }
-        .profile-pic-wrapper { width: 90px; height: 90px; border-radius: 50%; margin: 0 auto 12px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; transition: all 0.3s; border: 2px solid rgba(255,255,255,0.3); }
-        .profile-pic-wrapper:hover { background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.6); transform: scale(1.03); }
+        .profile-pic-wrapper { width: 90px; height: 90px; border-radius: 50%; margin: 0 auto 12px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; transition: all 0.3s; border: 2px solid #ffffff; box-shadow: none; position: relative; z-index: 1; }
+        .profile-pic-wrapper:hover { background: rgba(255,255,255,0.25); border-color: #ffffff; transform: scale(1.03); }
         .profile-pic { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: none; }
         .profile-pic-icon { font-size: 3.5rem; color: rgba(255,255,255,0.9); transition: opacity 0.2s; }
         .profile-pic-wrapper.has-image .profile-pic-icon { display: none; }
@@ -132,12 +132,62 @@
         .sidebar-header .subtitle { font-size: 0.66rem; opacity: 0.7; letter-spacing: 1.2px; text-transform: uppercase; font-weight: 500; color: #FFFFFF; }
         .sidebar-nav { flex: 1; padding: 8px 12px; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none; }
         .sidebar-nav::-webkit-scrollbar { display: none; }
-        .sidebar-nav a { display: flex; align-items: center; gap: 12px; padding: 11px 16px; color: rgba(255, 255, 255, 0.8); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: all 0.2s ease; border-radius: 10px; cursor: pointer; margin-bottom: 2px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
-        .sidebar-nav a:last-of-type { border-bottom: none; }
-        .sidebar-nav a:hover { background: rgba(255, 255, 255, 0.15); color: #fff; transform: translateX(2px); }
-        .sidebar-nav a.active { background: rgba(255, 255, 255, 0.25); color: #fff; font-weight: 600; box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); }
-        .sidebar-nav a.external-link { color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; border-top: 1px solid rgba(255,255,255,0.15); border-bottom: none; margin-top: 8px; padding-top: 14px; border-radius: 0 0 10px 10px; }
-        .sidebar-nav a.external-link:hover { color: #fff; background: rgba(21, 245, 186, 0.2); }
+
+        /* ========== SIDEBAR REDESENHADA ========== */
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 16px;
+            color: rgba(255, 255, 255, 0.75);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.25s ease;
+            border-radius: 0 12px 12px 0;      /* bordas arredondadas apenas à direita */
+            cursor: pointer;
+            margin-bottom: 2px;
+            border: none;                        /* remove borda inferior */
+            background: transparent;
+        }
+        .sidebar-nav a:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+            transform: translateX(4px);
+        }
+        .sidebar-nav a.active {
+            background: #F0F3FF;                /* mesma cor da área principal */
+            color: #211951;
+            font-weight: 700;
+            border-radius: 0 12px 12px 0;      /* mantém cantos arredondados à direita */
+            box-shadow: none;                   /* sem glow */
+        }
+        .sidebar-nav a.active .nav-icon i {
+            color: #15F5BA;                    /* ícone verde-água */
+        }
+        /* Links externos mantêm estilo similar */
+        .sidebar-nav a.external-link {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 8px;
+            padding-top: 14px;
+            border-radius: 0 12px 12px 0;
+        }
+        .sidebar-nav a.external-link:hover {
+            color: #fff;
+            background: rgba(21, 245, 186, 0.15);
+        }
+        /* Tema escuro */
+        [data-theme="dark"] .sidebar-nav a.active {
+            background: #0F172A;                /* mesmo --bg do tema escuro */
+            color: #F1F5F9;
+        }
+        [data-theme="dark"] .sidebar-nav a.active .nav-icon i {
+            color: #15F5BA;
+        }
+        /* ========== FIM SIDEBAR ========== */
+
         .sidebar-footer { padding: 14px 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.66rem; opacity: 0.6; text-align: center; color: #FFFFFF; }
         .main { flex: 1; margin-left: var(--sidebar-w); width: calc(100% - var(--sidebar-w)); display: flex; flex-direction: column; }
         .topbar { background: linear-gradient(135deg, #211951 0%, #836FFF 55%, #A085FF 100%); backdrop-filter: blur(14px); height: var(--header-h); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); position: sticky; top: 0; z-index: 50; color: #FFFFFF; box-shadow: 0 4px 20px rgba(33, 25, 81, 0.2); }
@@ -389,12 +439,13 @@
             <span class="subtitle">Assistente em Administração</span>
         </div>
         <nav class="sidebar-nav">
-            <a data-tab="dashboard" class="active" onclick="navegar('dashboard')"><span class="nav-icon"><i class="fa-solid fa-chart-pie"></i></span> Dashboard</a>
+            <a data-tab="dashboard" class="active" onclick="navegar('dashboard')"><span class="nav-icon"><i class="fa-solid fa-table"></i></span> Mesa de Estudos</a>
             <a data-tab="plano" onclick="navegar('plano')"><span class="nav-icon"><i class="fa-solid fa-calendar-check"></i></span> Plano Diário</a>
             <a data-tab="disciplinas" onclick="navegar('disciplinas')"><span class="nav-icon"><i class="fa-solid fa-book-open"></i></span> Disciplinas</a>
             <a data-tab="questoes" onclick="navegar('questoes')"><span class="nav-icon"><i class="fa-solid fa-file-pen"></i></span> Questões</a>
             <a data-tab="revisoes" onclick="navegar('revisoes')"><span class="nav-icon"><i class="fa-solid fa-arrows-rotate"></i></span> Revisões</a>
             <a data-tab="metas" onclick="navegar('metas')"><span class="nav-icon"><i class="fa-solid fa-bullseye"></i></span> Metas</a>
+            <a data-tab="cronometro" onclick="navegar('cronometro')"><span class="nav-icon"><i class="fa-solid fa-clock"></i></span> Cronômetro</a>
             <a data-tab="estatisticas" onclick="navegar('estatisticas')"><span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span> Estatísticas</a>
             <a data-tab="conquistas" onclick="navegar('conquistas')"><span class="nav-icon"><i class="fa-solid fa-trophy"></i></span> Conquistas</a>
             <a href="https://vulps-anki-memoriza-o.vercel.app/" target="_blank" rel="noopener noreferrer" class="external-link" onclick="event.stopPropagation();"><span class="nav-icon"><i class="fa-solid fa-file-circle-question"></i></span> Simulado Prova</a>
@@ -411,7 +462,7 @@
         <header class="topbar">
             <div style="display:flex;align-items:center;gap:12px;">
                 <button class="hamburger" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
-                <h1 id="pageTitle"><i class="fa-solid fa-chart-pie"></i> Dashboard</h1>
+                <h1 id="pageTitle"><i class="fa-solid fa-table"></i> Mesa de Estudos</h1>
             </div>
             <div class="topbar-actions">
                 <div class="global-search-wrap">
@@ -456,8 +507,8 @@
     <div id="confettiContainer" class="confetti-container"></div>
 
     <script>
-        // ==================== EDIÇÃO COMPLETA DO SISTEMA ====================
-        const editalData = { /* MESMO OBJETO COMPLETO DA VERSÃO ANTERIOR */ 
+        // ==================== EDIÇÃO COMPLETA DO SISTEMA (com cronômetro) ====================
+        const editalData = {
             grupos: { 'basicas': { nome: 'Conhecimentos Básicos', badgeClass: 'badge-basicas', pesoGrupo: 1 }, 'especificas': { nome: 'Conhecimentos Específicos', badgeClass: 'badge-especificas', pesoGrupo: 1.5 }, 'especializadas': { nome: 'Conhecimentos Especializados', badgeClass: 'badge-especializadas', pesoGrupo: 2 } },
             disciplinas: [
                 { id: 'lingua-portuguesa', nome: 'Língua Portuguesa', grupo: 'basicas', peso: 1, topicos: ['Interpretação e compreensão de textos', 'Características da textualidade', 'Estruturas linguísticas e classes de palavras', 'Pragmática: significado contextual', 'Semântica vocabular (antônimos, sinônimos, homônimos, parônimos, heterônimos)', 'Modos de organização discursiva (descrição, narração, exposição, argumentação)', 'Organização das frases nas situações comunicativas', 'Linguagem lógica e figurada', 'Níveis de linguagem', 'Tipos de discurso (direto, indireto, indireto livre)', 'Funções da linguagem'] },
@@ -485,7 +536,7 @@
         const DIAS_SEMANA = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
         const STORAGE_KEY = 'ufpb_assistente_admin_study_v14';
         
-        const frasesMotivacionais = [ /* igual ao original */ 
+        const frasesMotivacionais = [
             { texto: "Cada página estudada hoje é um degrau para sua aprovação na UFPB.", categoria: "Foco no Objetivo" },
             { texto: "O cargo de Assistente em Administração espera por quem não desiste.", categoria: "Foco no Objetivo" },
             { texto: "Estudar para concurso é investir no seu futuro com retorno garantido.", categoria: "Foco no Objetivo" },
@@ -499,7 +550,7 @@
         ];
         let indiceFraseAtual = Math.floor(Math.random() * frasesMotivacionais.length);
         
-        const CONQUISTAS = [ /* igual ao original */ 
+        const CONQUISTAS = [
             { id: 'primeiro_topico', nome: 'Primeiro Passo', descricao: 'Concluir seu primeiro tópico', icone: 'fa-solid fa-flag', condicao: () => getProgressoGeral().concluidos >= 1 },
             { id: '10_topicos', nome: 'Decolando', descricao: 'Concluir 10 tópicos', icone: 'fa-solid fa-rocket', condicao: () => getProgressoGeral().concluidos >= 10 },
             { id: '25_topicos', nome: 'Metade do Caminho', descricao: 'Concluir 25 tópicos', icone: 'fa-solid fa-road', condicao: () => getProgressoGeral().concluidos >= 25 },
@@ -517,7 +568,7 @@
             { id: 'plano_completo', nome: 'Dia Perfeito', descricao: 'Completar todos os itens do plano diário', icone: 'fa-solid fa-calendar-check', condicao: () => false }
         ];
         
-        let appState = { metaQuestoesDiaria:50, metaHorasDiaria:5, metaRevisoesSemana:4, dataInicio: new Date().toISOString().split('T')[0], topicosConcluidos:{}, topicosRevisao:{}, questoes:{}, anotacoes:{}, metasPorDisciplina:{}, cicloAtual:1, historicoDiario:{}, ultimaAtividade: new Date().toISOString(), planoDiarioConfig:{ modo:'auto', topicosPorDia:3, ciclo:{ 'dom':[], 'seg':[], 'ter':[], 'qua':[], 'qui':[], 'sex':[], 'sab':[] }, incluirRevisoes:true }, conquistasDesbloqueadas:{}, profilePic:'', linksTopicos:{} };
+        let appState = { metaQuestoesDiaria:50, metaHorasDiaria:5, metaRevisoesSemana:4, dataInicio: new Date().toISOString().split('T')[0], topicosConcluidos:{}, topicosRevisao:{}, questoes:{}, anotacoes:{}, metasPorDisciplina:{}, cicloAtual:1, historicoDiario:{}, ultimaAtividade: new Date().toISOString(), planoDiarioConfig:{ modo:'auto', topicosPorDia:3, ciclo:{ 'dom':[], 'seg':[], 'ter':[], 'qua':[], 'qui':[], 'sex':[], 'sab':[] }, incluirRevisoes:true }, conquistasDesbloqueadas:{}, profilePic:'', linksTopicos:{}, tempoEstudoPorDisciplina:{} };
         
         const progressoCache = {};
         function getProgressoDisciplinaCache(discId) { if (progressoCache[discId]) return progressoCache[discId]; const disc = editalData.disciplinas.find(d => d.id === discId); if (!disc || !disc.topicos || disc.topicos.length === 0) return { pct:0, concluidos:0, iniciados:0, total:0 }; const total = disc.topicos.length; let concluidos=0, iniciados=0; disc.topicos.forEach((_,i)=>{ const estado = appState.topicosConcluidos[`${discId}-${i}`] || 0; if(estado===2) concluidos++; else if(estado===1) iniciados++; }); const pct = total>0 ? Math.round(((concluidos + iniciados*0.5)/total)*100) : 0; const res = { pct, concluidos, iniciados, total }; progressoCache[discId]=res; return res; }
@@ -539,7 +590,7 @@
         function celebrarMetaDiaria() { const overlay=document.createElement('div'); overlay.className='celebracao-overlay'; overlay.onclick=()=>overlay.remove(); overlay.innerHTML=`<div class="celebracao-card" onclick="event.stopPropagation()"><span class="emoji">🎉</span><h2>Parabéns!</h2><p>Você bateu sua meta diária de questões hoje!</p><p style="font-size:0.85rem;color:var(--text-secondary);margin-top:8px;">Continue assim e a aprovação será consequência.</p><button class="btn btn-accent" style="margin-top:16px;" onclick="this.closest('.celebracao-overlay').remove()">✨ Continuar</button></div>`; document.body.appendChild(overlay); dispararConfetes(); }
         function dispararConfetes() { const container=document.getElementById('confettiContainer'); const cores=['#836FFF','#15F5BA','#10B981','#E91B00','#A8F5E0','#211951','#8B5CF6','#EC4899']; for(let i=0;i<60;i++){ const piece=document.createElement('div'); piece.className='confetti-piece'; piece.style.left=Math.random()*100+'%'; piece.style.backgroundColor=cores[Math.floor(Math.random()*cores.length)]; piece.style.width=(Math.random()*8+6)+'px'; piece.style.height=(Math.random()*8+6)+'px'; piece.style.animationDuration=(Math.random()*2+2)+'s'; piece.style.animationDelay=Math.random()*0.5+'s'; piece.style.borderRadius=Math.random()>0.5?'50%':'2px'; container.appendChild(piece); setTimeout(()=>piece.remove(),3000); } }
         function dispararConfetesTopico() { const container=document.getElementById('confettiContainer'); const cores=['#836FFF','#15F5BA','#A8F5E0','#211951']; for(let i=0;i<30;i++){ const piece=document.createElement('div'); piece.className='confetti-piece'; piece.style.left=Math.random()*100+'%'; piece.style.backgroundColor=cores[Math.floor(Math.random()*cores.length)]; piece.style.width=(Math.random()*6+4)+'px'; piece.style.height=(Math.random()*6+4)+'px'; piece.style.animationDuration=(Math.random()*1.5+1.5)+'s'; piece.style.animationDelay=Math.random()*0.3+'s'; piece.style.borderRadius='50%'; container.appendChild(piece); setTimeout(()=>piece.remove(),2500); } }
-        function carregarState() { try{ const saved=localStorage.getItem(STORAGE_KEY); if(saved){ const parsed=JSON.parse(saved); appState={...appState,...parsed}; if(appState.topicosConcluidos){ const migrado={}; for(const[key,val] of Object.entries(appState.topicosConcluidos)) migrado[key]=(val===true||val===1||val===2)?(val===true?2:val):0; appState.topicosConcluidos=migrado; } if(!appState.planoDiarioConfig) appState.planoDiarioConfig={ modo:'auto', topicosPorDia:3, ciclo:{ 'dom':[], 'seg':[], 'ter':[], 'qua':[], 'qui':[], 'sex':[], 'sab':[] }, incluirRevisoes:true }; if(!appState.planoDiarioConfig.ciclo) appState.planoDiarioConfig.ciclo={ 'dom':[], 'seg':[], 'ter':[], 'qua':[], 'qui':[], 'sex':[], 'sab':[] }; DIAS_SEMANA.forEach(dia=>{ if(!appState.planoDiarioConfig.ciclo[dia]) appState.planoDiarioConfig.ciclo[dia]=[]; }); if(!appState.conquistasDesbloqueadas) appState.conquistasDesbloqueadas={}; if(!appState.profilePic) appState.profilePic=''; if(!appState.linksTopicos) appState.linksTopicos={}; } if(!appState.topicosConcluidos) appState.topicosConcluidos={}; if(!appState.topicosRevisao) appState.topicosRevisao={}; if(!appState.questoes) appState.questoes={}; if(!appState.anotacoes) appState.anotacoes={}; if(!appState.metasPorDisciplina) appState.metasPorDisciplina={}; if(!appState.historicoDiario) appState.historicoDiario={}; if(!appState.planoDiarioConfig) appState.planoDiarioConfig={ modo:'auto', topicosPorDia:3, ciclo:{ 'dom':[], 'seg':[], 'ter':[], 'qua':[], 'qui':[], 'sex':[], 'sab':[] }, incluirRevisoes:true }; if(!appState.conquistasDesbloqueadas) appState.conquistasDesbloqueadas={}; if(!appState.profilePic) appState.profilePic=''; if(!appState.linksTopicos) appState.linksTopicos={}; invalidateAllCache(); } catch(e){} }
+        function carregarState() { try{ const saved=localStorage.getItem(STORAGE_KEY); if(saved){ const parsed=JSON.parse(saved); appState={...appState,...parsed}; if(appState.topicosConcluidos){ const migrado={}; for(const[key,val] of Object.entries(appState.topicosConcluidos)) migrado[key]=(val===true||val===1||val===2)?(val===true?2:val):0; appState.topicosConcluidos=migrado; } if(!appState.planoDiarioConfig) appState.planoDiarioConfig={ modo:'auto', topicosPorDia:3, ciclo:{ 'dom':[], 'seg':[], 'ter':[], 'qua':[], 'qui':[], 'sex':[], 'sab':[] }, incluirRevisoes:true }; if(!appState.planoDiarioConfig.ciclo) appState.planoDiarioConfig.ciclo={ 'dom':[], 'seg':[], 'ter':[], 'qua':[], 'qui':[], 'sex':[], 'sab':[] }; DIAS_SEMANA.forEach(dia=>{ if(!appState.planoDiarioConfig.ciclo[dia]) appState.planoDiarioConfig.ciclo[dia]=[]; }); if(!appState.conquistasDesbloqueadas) appState.conquistasDesbloqueadas={}; if(!appState.profilePic) appState.profilePic=''; if(!appState.linksTopicos) appState.linksTopicos={}; if(!appState.tempoEstudoPorDisciplina) appState.tempoEstudoPorDisciplina={}; } if(!appState.topicosConcluidos) appState.topicosConcluidos={}; if(!appState.topicosRevisao) appState.topicosRevisao={}; if(!appState.questoes) appState.questoes={}; if(!appState.anotacoes) appState.anotacoes={}; if(!appState.metasPorDisciplina) appState.metasPorDisciplina={}; if(!appState.historicoDiario) appState.historicoDiario={}; if(!appState.planoDiarioConfig) appState.planoDiarioConfig={ modo:'auto', topicosPorDia:3, ciclo:{ 'dom':[], 'seg':[], 'ter':[], 'qua':[], 'qui':[], 'sex':[], 'sab':[] }, incluirRevisoes:true }; if(!appState.conquistasDesbloqueadas) appState.conquistasDesbloqueadas={}; if(!appState.profilePic) appState.profilePic=''; if(!appState.linksTopicos) appState.linksTopicos={}; if(!appState.tempoEstudoPorDisciplina) appState.tempoEstudoPorDisciplina={}; invalidateAllCache(); } catch(e){} }
         function salvarState() { appState.ultimaAtividade=new Date().toISOString(); localStorage.setItem(STORAGE_KEY,JSON.stringify(appState)); invalidateAllCache(); }
         function toast(msg) { const t=document.getElementById('toast'); t.innerHTML=msg; t.classList.remove('hidden'); clearTimeout(t._timeout); t._timeout=setTimeout(()=>t.classList.add('hidden'),3500); }
         function getProgressoDisciplina(discId) { return getProgressoDisciplinaCache(discId); }
@@ -555,9 +606,39 @@
         let chartInstances={};
         function destruirGraficos() { Object.values(chartInstances).forEach(c=>{ try{ c.destroy(); }catch(e){} }); chartInstances={}; }
         function stopParticles() { if(particlesAnimationId){ cancelAnimationFrame(particlesAnimationId); particlesAnimationId=null; } }
-        function navegar(tab){ destruirGraficos(); stopParticles(); currentTab=tab; document.querySelectorAll('.sidebar-nav a').forEach(a=>a.classList.remove('active')); const link=document.querySelector(`.sidebar-nav a[data-tab="${tab}"]`); if(link) link.classList.add('active'); const icons={'dashboard':'fa-chart-pie','plano':'fa-calendar-check','disciplinas':'fa-book-open','questoes':'fa-file-pen','revisoes':'fa-arrows-rotate','metas':'fa-bullseye','estatisticas':'fa-chart-line','conquistas':'fa-trophy'}; const titles={'dashboard':'Dashboard','plano':'Plano Diário','disciplinas':'Disciplinas','questoes':'Questões','revisoes':'Revisões do Dia','metas':'Metas','estatisticas':'Estatísticas','conquistas':'Conquistas'}; document.getElementById('pageTitle').innerHTML=`<i class="fa-solid ${icons[tab]}"></i> ${titles[tab]}`; renderizarTab(tab); if(tab==='dashboard'){ setTimeout(initGraficosDashboard,400); setTimeout(animarContadores,300); } if(tab==='estatisticas') setTimeout(initGraficosEstatisticas,500); fecharSidebar(); }
-        function renderizarTab(tab){ const area=document.getElementById('contentArea'); const renders={'dashboard':renderDashboard,'plano':renderPlanoDiario,'disciplinas':renderDisciplinas,'questoes':renderQuestoes,'revisoes':renderRevisoes,'metas':renderMetas,'estatisticas':renderEstatisticas,'conquistas':renderConquistas}; area.innerHTML=(renders[tab]||renderDashboard)(); if(tab==='dashboard') initParticles(); }
+        function navegar(tab){
+            destruirGraficos();
+            stopParticles();
+            currentTab=tab;
+            document.querySelectorAll('.sidebar-nav a').forEach(a=>a.classList.remove('active'));
+            const link=document.querySelector(`.sidebar-nav a[data-tab="${tab}"]`);
+            if(link) link.classList.add('active');
+            const icons={'dashboard':'fa-table','plano':'fa-calendar-check','disciplinas':'fa-book-open','questoes':'fa-file-pen','revisoes':'fa-arrows-rotate','metas':'fa-bullseye','cronometro':'fa-clock','estatisticas':'fa-chart-line','conquistas':'fa-trophy'};
+            const titles={'dashboard':'Mesa de Estudos','plano':'Plano Diário','disciplinas':'Disciplinas','questoes':'Questões','revisoes':'Revisões do Dia','metas':'Metas','cronometro':'Cronômetro','estatisticas':'Estatísticas','conquistas':'Conquistas'};
+            document.getElementById('pageTitle').innerHTML=`<i class="fa-solid ${icons[tab]}"></i> ${titles[tab]}`;
+            renderizarTab(tab);
+            if(tab==='dashboard'){ setTimeout(initGraficosDashboard,400); setTimeout(animarContadores,300); }
+            if(tab==='estatisticas') setTimeout(initGraficosEstatisticas,500);
+            fecharSidebar();
+        }
+        function renderizarTab(tab){
+            const area=document.getElementById('contentArea');
+            const renders={
+                'dashboard':renderDashboard,
+                'plano':renderPlanoDiario,
+                'disciplinas':renderDisciplinas,
+                'questoes':renderQuestoes,
+                'revisoes':renderRevisoes,
+                'metas':renderMetas,
+                'cronometro':renderCronometro,
+                'estatisticas':renderEstatisticas,
+                'conquistas':renderConquistas
+            };
+            area.innerHTML=(renders[tab]||renderDashboard)();
+            if(tab==='dashboard') initParticles();
+        }
         
+        // Renderizações das abas (mantidas completas)
         function renderizarFraseMotivacional(){ const frase=frasesMotivacionais[indiceFraseAtual]; return `<div class="motivational-card" id="motivationalCard"><div class="frase-texto">${frase.texto}</div><div class="frase-categoria">${frase.categoria}</div><div class="frase-nav"><button onclick="fraseAnterior();event.stopPropagation();"><i class="fa-solid fa-chevron-left"></i></button><button onclick="proximaFrase();event.stopPropagation();"><i class="fa-solid fa-chevron-right"></i></button></div></div>`; }
         function proximaFrase(){ indiceFraseAtual=(indiceFraseAtual+1)%frasesMotivacionais.length; atualizarFraseNoDOM(); }
         function fraseAnterior(){ indiceFraseAtual=(indiceFraseAtual-1+frasesMotivacionais.length)%frasesMotivacionais.length; atualizarFraseNoDOM(); }
@@ -774,19 +855,224 @@
         function fecharSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.add('hidden'); }
         function toggleTheme(){ const html=document.documentElement; if(html.hasAttribute('data-theme')) html.removeAttribute('data-theme'); else html.setAttribute('data-theme','dark'); const btn=document.getElementById('themeToggle'); if(btn){ const icon=btn.querySelector('i'); if(html.hasAttribute('data-theme')) icon.className='fa-solid fa-sun'; else icon.className='fa-solid fa-moon'; } }
         function resetThemeToDefault(){ document.documentElement.removeAttribute('data-theme'); }
-        function initProfilePicture(){
-            const wrapper=document.getElementById('profilePicWrapper'), img=document.getElementById('profilePicImg'), icon=document.getElementById('profilePicIcon'), input=document.getElementById('profilePicInput');
-            if(appState.profilePic){ img.src=appState.profilePic; img.style.display='block'; icon.style.display='none'; wrapper.classList.add('has-image'); }
-            wrapper.addEventListener('click',()=>input.click());
-            input.addEventListener('change',e=>{ const file=e.target.files[0]; if(!file) return; if(!file.type.startsWith('image/')){ toast('Formato de imagem não suportado.'); return; } if(file.size>200*1024){ toast('Imagem muito grande. Máximo 200 KB.'); return; } const reader=new FileReader(); reader.onload=ev=>{ const dataUri=ev.target.result; appState.profilePic=dataUri; salvarState(); img.src=dataUri; img.style.display='block'; icon.style.display='none'; wrapper.classList.add('has-image'); toast('Foto de perfil atualizada!'); }; reader.readAsDataURL(file); });
+        // ---- FUNÇÃO DE PERFIL ATUALIZADA ----
+        function initProfilePicture() {
+            const wrapper = document.getElementById('profilePicWrapper');
+            const img = document.getElementById('profilePicImg');
+            const icon = document.getElementById('profilePicIcon');
+            const input = document.getElementById('profilePicInput');
+
+            if (appState.profilePic && appState.profilePic.startsWith('data:image/')) {
+                img.src = appState.profilePic;
+                img.style.display = 'block';
+                icon.style.display = 'none';
+                wrapper.classList.add('has-image');
+            } else {
+                img.src = '';
+                img.style.display = 'none';
+                icon.style.display = 'block';
+                wrapper.classList.remove('has-image');
+            }
+
+            wrapper.addEventListener('click', () => input.click());
+
+            input.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/bmp'];
+                if (!validTypes.includes(file.type)) {
+                    toast('Formato inválido. Envie JPEG, PNG, GIF, WebP ou BMP.');
+                    input.value = '';
+                    return;
+                }
+
+                const MAX_SIZE = 2 * 1024 * 1024; // 2 MB
+                if (file.size > MAX_SIZE) {
+                    toast('Imagem muito grande. Máximo 2 MB.');
+                    input.value = '';
+                    return;
+                }
+
+                wrapper.style.opacity = '0.5';
+                wrapper.style.pointerEvents = 'none';
+
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const dataUri = ev.target.result;
+                    appState.profilePic = dataUri;
+                    salvarState();
+                    img.src = dataUri;
+                    img.style.display = 'block';
+                    icon.style.display = 'none';
+                    wrapper.classList.add('has-image');
+                    wrapper.style.opacity = '1';
+                    wrapper.style.pointerEvents = 'auto';
+                    toast('Foto de perfil atualizada!');
+                };
+                reader.onerror = () => {
+                    wrapper.style.opacity = '1';
+                    wrapper.style.pointerEvents = 'auto';
+                    toast('Erro ao carregar a imagem.');
+                };
+                reader.readAsDataURL(file);
+            });
         }
+        // ---- FIM PERFIL ----
+
+        // =============== CRONÔMETRO ===============
+        let timerInterval = null;
+        let timerRunning = false;
+        let timerStartTime = null;
+        let timerElapsed = 0; // segundos decorridos na sessão atual
+        let timerDisciplina = 'lingua-portuguesa'; // padrão inicial
+
+        function formatarTempo(segundos) {
+            const h = Math.floor(segundos / 3600);
+            const m = Math.floor((segundos % 3600) / 60);
+            const s = segundos % 60;
+            return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        }
+
+        function atualizarDisplayCronometro() {
+            const agora = Date.now();
+            const totalSegundos = timerElapsed + Math.floor((agora - timerStartTime) / 1000);
+            const sessaoEl = document.getElementById('cronoSessao');
+            if (sessaoEl) sessaoEl.textContent = formatarTempo(totalSegundos);
+            const totalDisc = appState.tempoEstudoPorDisciplina[timerDisciplina] || 0;
+            const totalEl = document.getElementById('cronoTotal');
+            if (totalEl) totalEl.textContent = formatarTempo(totalDisc + (timerRunning ? Math.floor((agora - timerStartTime) / 1000) : 0));
+        }
+
+        function iniciarCronometro() {
+            if (timerRunning) return;
+            timerStartTime = Date.now();
+            timerRunning = true;
+            document.getElementById('btnIniciar').style.display = 'none';
+            document.getElementById('btnPausar').style.display = 'inline-flex';
+            timerInterval = setInterval(atualizarDisplayCronometro, 1000);
+            atualizarDisplayCronometro();
+            registrarAtividadeHoje(); // marca atividade ao iniciar estudo
+        }
+
+        function pausarCronometro() {
+            if (!timerRunning) return;
+            const agora = Date.now();
+            const segundosAdicionais = Math.floor((agora - timerStartTime) / 1000);
+            timerElapsed += segundosAdicionais;
+            appState.tempoEstudoPorDisciplina[timerDisciplina] = (appState.tempoEstudoPorDisciplina[timerDisciplina] || 0) + segundosAdicionais;
+            salvarState();
+            timerRunning = false;
+            clearInterval(timerInterval);
+            timerInterval = null;
+            document.getElementById('btnIniciar').style.display = 'inline-flex';
+            document.getElementById('btnPausar').style.display = 'none';
+            // Atualiza display final
+            const sessaoEl = document.getElementById('cronoSessao');
+            if (sessaoEl) sessaoEl.textContent = formatarTempo(timerElapsed);
+            const totalEl = document.getElementById('cronoTotal');
+            if (totalEl) totalEl.textContent = formatarTempo(appState.tempoEstudoPorDisciplina[timerDisciplina] || 0);
+            // Atualiza tabela
+            renderizarTabelaTempos();
+        }
+
+        function resetarSessaoCronometro() {
+            if (timerRunning) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                timerRunning = false;
+                document.getElementById('btnIniciar').style.display = 'inline-flex';
+                document.getElementById('btnPausar').style.display = 'none';
+            }
+            // Não zera o acumulado, apenas a sessão atual
+            timerElapsed = 0;
+            timerStartTime = null;
+            const sessaoEl = document.getElementById('cronoSessao');
+            if (sessaoEl) sessaoEl.textContent = '00:00:00';
+            const totalEl = document.getElementById('cronoTotal');
+            if (totalEl) totalEl.textContent = formatarTempo(appState.tempoEstudoPorDisciplina[timerDisciplina] || 0);
+        }
+
+        function selecionarDisciplinaCronometro(discId) {
+            if (timerRunning) {
+                pausarCronometro(); // pausa automaticamente ao trocar
+            }
+            timerDisciplina = discId;
+            timerElapsed = 0; // reseta sessão
+            document.getElementById('cronoDisciplinaSelect').value = discId;
+            const sessaoEl = document.getElementById('cronoSessao');
+            if (sessaoEl) sessaoEl.textContent = '00:00:00';
+            const totalEl = document.getElementById('cronoTotal');
+            if (totalEl) totalEl.textContent = formatarTempo(appState.tempoEstudoPorDisciplina[discId] || 0);
+            renderizarTabelaTempos(); // destaque na tabela
+        }
+
+        function renderizarTabelaTempos() {
+            const tbody = document.getElementById('cronoTabelaBody');
+            if (!tbody) return;
+            let html = '';
+            editalData.disciplinas.forEach(d => {
+                const tempo = appState.tempoEstudoPorDisciplina[d.id] || 0;
+                const destaque = d.id === timerDisciplina ? 'style="font-weight:700; color: var(--primary);"' : '';
+                html += `<tr ${destaque}><td>${getIcon(d.id)} ${d.nome}</td><td>${formatarTempo(tempo)}</td></tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function renderCronometro() {
+            const disciplinaAtual = editalData.disciplinas.find(d => d.id === timerDisciplina) || editalData.disciplinas[0];
+            let selectHtml = '<select id="cronoDisciplinaSelect" onchange="selecionarDisciplinaCronometro(this.value)" style="padding:8px;border-radius:8px;border:2px solid var(--border);background:var(--surface);color:var(--text-primary);width:100%;">';
+            editalData.disciplinas.forEach(d => {
+                selectHtml += `<option value="${d.id}" ${d.id === timerDisciplina ? 'selected' : ''}>${d.nome}</option>`;
+            });
+            selectHtml += '</select>';
+
+            const tempoTotalDisc = appState.tempoEstudoPorDisciplina[timerDisciplina] || 0;
+            let tabelaHtml = '<table><thead><tr><th>Disciplina</th><th>Tempo Total</th></tr></thead><tbody id="cronoTabelaBody">';
+            editalData.disciplinas.forEach(d => {
+                const tempo = appState.tempoEstudoPorDisciplina[d.id] || 0;
+                const destaque = d.id === timerDisciplina ? 'style="font-weight:700; color: var(--primary);"' : '';
+                tabelaHtml += `<tr ${destaque}><td>${getIcon(d.id)} ${d.nome}</td><td>${formatarTempo(tempo)}</td></tr>`;
+            });
+            tabelaHtml += '</tbody></table>';
+
+            return `
+            <div class="card" style="border:2px solid #836FFF;">
+                <div class="card-header"><h3><i class="fa-solid fa-clock"></i> Cronômetro de Estudos</h3></div>
+                <div style="display:flex; gap:20px; flex-wrap:wrap; align-items:center; margin-bottom:16px;">
+                    <div style="font-weight:600;">Disciplina:</div>
+                    <div style="min-width:250px;">${selectHtml}</div>
+                </div>
+                <div style="display:flex; gap:40px; flex-wrap:wrap; justify-content:center; text-align:center;">
+                    <div>
+                        <div style="font-size:0.9rem; color: var(--text-secondary);">Sessão Atual</div>
+                        <div id="cronoSessao" style="font-size:3rem; font-weight:800; font-family:monospace;">${formatarTempo(timerElapsed)}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:0.9rem; color: var(--text-secondary);">Total em ${disciplinaAtual.nome}</div>
+                        <div id="cronoTotal" style="font-size:3rem; font-weight:800; font-family:monospace; color: var(--primary);">${formatarTempo(tempoTotalDisc)}</div>
+                    </div>
+                </div>
+                <div style="display:flex; gap:12px; justify-content:center; margin:24px 0;">
+                    <button id="btnIniciar" class="btn btn-accent" onclick="iniciarCronometro()"><i class="fa-solid fa-play"></i> Iniciar</button>
+                    <button id="btnPausar" class="btn btn-warning" style="display:none;" onclick="pausarCronometro()"><i class="fa-solid fa-pause"></i> Pausar</button>
+                    <button class="btn btn-outline" onclick="resetarSessaoCronometro()"><i class="fa-solid fa-rotate-left"></i> Resetar Sessão</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h3>Total de Estudos por Disciplina</h3></div>
+                <div class="table-wrap">${tabelaHtml}</div>
+            </div>`;
+        }
+
+        // Inicialização
         function setupLoginForm(){
             const form=document.getElementById('loginForm'), errorDiv=document.getElementById('loginError');
             form.addEventListener('submit',function(e){ e.preventDefault(); const username=document.getElementById('loginUsername').value.trim(), password=document.getElementById('loginPassword').value.trim(); if(username==='Aluno vulp' && password==='456789'){ sessionStorage.setItem('authenticated','true'); document.getElementById('loginScreen').style.display='none'; document.getElementById('sidebar').style.display='flex'; document.getElementById('mainContent').style.display='flex'; init(); }else{ errorDiv.classList.add('show'); document.getElementById('loginPassword').value=''; document.getElementById('loginPassword').focus(); } });
         }
         function init(){
             if(sessionStorage.getItem('authenticated')){ document.getElementById('loginScreen').style.display='none'; document.getElementById('sidebar').style.display='flex'; document.getElementById('mainContent').style.display='flex'; }else{ setupLoginForm(); return; }
-            resetThemeToDefault(); carregarState(); if(!appState.linksTopicos) appState.linksTopicos={}; salvarState(); atualizarRelogio(); setInterval(atualizarRelogio,30000);
+            resetThemeToDefault(); carregarState(); if(!appState.linksTopicos) appState.linksTopicos={}; if(!appState.tempoEstudoPorDisciplina) appState.tempoEstudoPorDisciplina={}; salvarState(); atualizarRelogio(); setInterval(atualizarRelogio,30000);
             editalData.disciplinas.forEach(d=>{ if(!appState.questoes[d.id]) appState.questoes[d.id]={resolvidas:0,corretas:0}; if(!appState.metasPorDisciplina[d.id]) appState.metasPorDisciplina[d.id]={questoes:0,horas:0}; });
             navegar('dashboard'); initGlobalSearch(); initProfilePicture(); setTimeout(verificarConquistas,500);
         }
